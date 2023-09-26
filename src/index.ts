@@ -20,6 +20,7 @@ export * from './application';
 
 export async function main(options: ApplicationConfig = {}) {
 	const app = new SimplizeTripApiApplication(options);
+
 	await app.boot();
 	await app.start();
 
