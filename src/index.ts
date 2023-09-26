@@ -1,5 +1,21 @@
 import { ApplicationConfig, SimplizeTripApiApplication } from './application';
 
+import dotenvExt from 'dotenv-extended';
+
+dotenvExt.load({
+	encoding: 'utf8',
+	silent: true,
+	path: '.env',
+	defaults: '.env.defaults',
+	schema: '.env.schema',
+	errorOnMissing: false,
+	errorOnExtra: false,
+	errorOnRegex: false,
+	includeProcessEnv: false,
+	assignToProcessEnv: true,
+	overrideProcessEnv: false,
+});
+
 export * from './application';
 
 export async function main(options: ApplicationConfig = {}) {

@@ -8,6 +8,7 @@ import {
 } from '@loopback/rest-explorer';
 import { ServiceMixin } from '@loopback/service-proxy';
 import path from 'path';
+
 import { MySequence } from './sequence';
 
 export { ApplicationConfig };
