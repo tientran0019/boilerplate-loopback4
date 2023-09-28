@@ -1,3 +1,5 @@
+import path from 'path';
+
 import { BootMixin } from '@loopback/boot';
 import { ApplicationConfig } from '@loopback/core';
 import { RepositoryMixin } from '@loopback/repository';
@@ -7,12 +9,11 @@ import {
 	RestExplorerComponent,
 } from '@loopback/rest-explorer';
 import { ServiceMixin } from '@loopback/service-proxy';
-import path from 'path';
-import { WinstonLoggerService } from 'src/services/logger.service';
-import { LogErrorProvider } from 'src/providers/log-error.provider';
 
-import { MySequence } from 'src/sequence';
+import { LoggerService } from 'src/services/logger.service';
+import { LogErrorProvider } from 'src/providers/log-error.provider';
 import { LoggerBindings } from 'src/keys';
+import { MySequence } from 'src/sequence';
 
 export { ApplicationConfig };
 
@@ -22,7 +23,7 @@ export class SimplizeTripApiApplication extends BootMixin(
 	constructor(options: ApplicationConfig = {}) {
 		super(options);
 
-		this.bind(LoggerBindings.LOGGER).toClass(WinstonLoggerService);
+		this.bind(LoggerBindings.LOGGER).toClass(LoggerService);
 		this.bind(RestBindings.SequenceActions.LOG_ERROR).toProvider(LogErrorProvider);
 
 		// Set up the custom sequence
@@ -47,5 +48,23 @@ export class SimplizeTripApiApplication extends BootMixin(
 				nested: true,
 			},
 		};
+
+		// this.setupLogging();
 	}
+
+	// add morgan
+
+	// private setupLogging() {
+	// 	const morganFactory = (config?: morgan.Options<Request, Response>) => {
+	// 		this.debug('Morgan configuration', config);
+	// 		return morgan('combined', config);
+	// 	};
+
+	// 	const defaultConfig: morgan.Options<Request, Response> = {};
+
+	// 	this.expressMiddleware(morganFactory, defaultConfig, {
+	// 		injectConfiguration: 'watch',
+	// 		key: 'middleware.morgan',
+	// 	});
+	// }
 }

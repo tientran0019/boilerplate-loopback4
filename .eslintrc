@@ -3,6 +3,7 @@
 		"@loopback/eslint-config"
 	],
 	"rules": {
+		"@typescript-eslint/no-explicit-any": "off",
 		"quotes": [
 			"error",
 			"single",
@@ -30,6 +31,7 @@
 			"error",
 			"always"
 		],
+		"no-unused-private-class-members": "error",
 		"no-unused-vars": [
 			"error",
 			{

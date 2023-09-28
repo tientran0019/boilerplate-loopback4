@@ -7,6 +7,9 @@ import {
 	response,
 } from '@loopback/rest';
 
+import { LoggerBindings } from 'src/keys';
+import { LoggerService } from 'src/services/logger.service';
+
 import { random } from 'src/utils/random';
 
 /**
@@ -42,10 +45,16 @@ const PING_RESPONSE: ResponseObject = {
 export class PingController {
 	constructor(@inject(RestBindings.Http.REQUEST) private req: Request) { }
 
+	// Inject a winston logger
+	@inject(LoggerBindings.LOGGER)
+	protected logger: LoggerService;
+
 	// Map to `GET /ping`
 	@get('/ping')
 	@response(200, PING_RESPONSE)
 	ping(): object {
+		this.logger.log('info', `greeting ${random()}`);
+
 		// Reply with a greeting, the current time, the url, and request headers
 		return {
 			greeting: 'Hello from LoopBack ' + random(),
