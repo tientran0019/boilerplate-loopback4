@@ -35,6 +35,10 @@ if (require.main === module) {
 	// Run the application
 	const config = {
 		rest: {
+			basePath: '/api/v1',
+			router: {
+				strict: true,
+			},
 			port: +(process.env.PORT ?? 3000),
 			host: process.env.HOST ?? 'localhost',
 			// The `gracePeriodForClose` provides a graceful close for http/https
@@ -46,6 +50,24 @@ if (require.main === module) {
 			openApiSpec: {
 				// useful when used with OpenAPI-to-GraphQL to locate your application
 				setServersFromRequest: true,
+			},
+			cors: {
+				origin: process.env.CORS_DOMAIN ? process.env.CORS_DOMAIN.split(',') : '*',
+				methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+				preflightContinue: false,
+				optionsSuccessStatus: 204,
+				maxAge: 86400,
+				credentials: true,
+			},
+			requestBodyParser: {
+				json: {
+					strict: true,
+					limit: '100kb',
+				},
+				urlencoded: {
+					extended: true,
+					limit: '100kb',
+				},
 			},
 		},
 	};

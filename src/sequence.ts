@@ -15,6 +15,14 @@ const middlewareList: ExpressRequestHandler[] = [
 		frameguard: {
 			action: 'deny',
 		},
+		contentSecurityPolicy: {
+			useDefaults: true,
+			directives: {
+				'img-src': ['\'self\'', 'https: data:'],
+				'script-src': ['\'self\'', '\'unsafe-inline\'', 'https: data:'],
+			},
+			// reportOnly: true,
+		},
 	}), // options for helmet is fixed and cannot be changed at runtime
 	morgan('dev', {}), // options for morgan is fixed and cannot be changed at runtime
 ];

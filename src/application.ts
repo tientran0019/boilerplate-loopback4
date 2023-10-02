@@ -1,5 +1,3 @@
-import path from 'path';
-
 import { BootMixin } from '@loopback/boot';
 import { ApplicationConfig } from '@loopback/core';
 import { RepositoryMixin } from '@loopback/repository';
@@ -27,15 +25,16 @@ export class SimplizeTripApiApplication extends BootMixin(
 		this.bind(LoggerBindings.LOGGER).toClass(LoggerService);
 		this.bind(RestBindings.SequenceActions.LOG_ERROR).toProvider(LogErrorProvider);
 
-		// Set up the custom sequence
-		this.sequence(MySequence);
-
 		// Set up default home page
 		this.static('/', appRoot + '/public');
+
+		// Set up the custom sequence
+		this.sequence(MySequence);
 
 		// Customize @loopback/rest-explorer configuration here
 		this.configure(RestExplorerBindings.COMPONENT).to({
 			path: '/explorer',
+			indexTitle: 'SimplizeTrip API Explorer',
 		});
 		this.component(RestExplorerComponent);
 
