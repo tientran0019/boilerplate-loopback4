@@ -69,7 +69,7 @@ export class LoggerService {
 								headers,
 							};
 
-							if (meta && Object.keys(meta).length > 0) {
+							if (headers && meta && Object.keys(meta).length > 0) {
 								console.log('Metadata:', meta);
 							}
 							return `[${timestamp}] [${level}] [${message}]`;

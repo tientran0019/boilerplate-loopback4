@@ -9,6 +9,7 @@ import {
 	RestExplorerComponent,
 } from '@loopback/rest-explorer';
 import { ServiceMixin } from '@loopback/service-proxy';
+import appRoot from 'app-root-path';
 
 import { LoggerService } from 'src/services/logger.service';
 import { LogErrorProvider } from 'src/providers/log-error.provider';
@@ -30,7 +31,7 @@ export class SimplizeTripApiApplication extends BootMixin(
 		this.sequence(MySequence);
 
 		// Set up default home page
-		this.static('/', path.join(__dirname, '../public'));
+		this.static('/', appRoot + '/public');
 
 		// Customize @loopback/rest-explorer configuration here
 		this.configure(RestExplorerBindings.COMPONENT).to({
