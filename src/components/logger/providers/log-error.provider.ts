@@ -2,8 +2,8 @@ import { Provider } from '@loopback/context';
 import { LogError, Request } from '@loopback/rest';
 import { inject } from '@loopback/core';
 
-import { LoggerService } from 'src/services/logger.service';
-import { LoggerBindings } from 'src/keys';
+import { LoggerService } from '../services/logger.service';
+import { LoggerBindings } from '../keys';
 
 export class LogErrorProvider implements Provider<LogError> {
 	constructor(@inject(LoggerBindings.LOGGER) protected logger: LoggerService) { }

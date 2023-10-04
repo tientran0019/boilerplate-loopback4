@@ -1,21 +1,5 @@
 import { ApplicationConfig, SimplizeTripApiApplication } from './application';
 
-import dotenvExt from 'dotenv-extended';
-
-dotenvExt.load({
-	encoding: 'utf8',
-	silent: true,
-	path: '.env',
-	defaults: '.env.defaults',
-	schema: '.env.schema',
-	errorOnMissing: false,
-	errorOnExtra: false,
-	errorOnRegex: false,
-	includeProcessEnv: false,
-	assignToProcessEnv: true,
-	overrideProcessEnv: false,
-});
-
 export * from './application';
 
 export async function main(options: ApplicationConfig = {}) {
@@ -48,6 +32,7 @@ if (require.main === module) {
 			// See https://www.npmjs.com/package/stoppable
 			gracePeriodForClose: 5000, // 5 seconds
 			openApiSpec: {
+				disabled: false,
 				// useful when used with OpenAPI-to-GraphQL to locate your application
 				setServersFromRequest: true,
 			},

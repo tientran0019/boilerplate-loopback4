@@ -7,8 +7,7 @@ import {
 	response,
 } from '@loopback/rest';
 
-import { LoggerBindings } from 'src/keys';
-import { LoggerService } from 'src/services/logger.service';
+import { LoggerBindings, LoggerService } from 'src/components/logger';
 
 import { random } from 'src/utils/random';
 

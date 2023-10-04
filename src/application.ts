@@ -1,18 +1,46 @@
 import { BootMixin } from '@loopback/boot';
 import { ApplicationConfig } from '@loopback/core';
 import { RepositoryMixin } from '@loopback/repository';
-import { RestApplication, RestBindings } from '@loopback/rest';
+import { RestApplication } from '@loopback/rest';
 import {
 	RestExplorerBindings,
 	RestExplorerComponent,
 } from '@loopback/rest-explorer';
 import { ServiceMixin } from '@loopback/service-proxy';
-import appRoot from 'app-root-path';
 
-import { LoggerService } from 'src/services/logger.service';
-import { LogErrorProvider } from 'src/providers/log-error.provider';
-import { LoggerBindings } from 'src/keys';
+import appRoot from 'app-root-path';
+import crypto from 'crypto';
+
+import { AuthenticationComponent } from '@loopback/authentication';
+import {
+	JWTAuthenticationComponent,
+	MyUserService,
+	RefreshTokenServiceBindings,
+	TokenServiceBindings,
+	UserServiceBindings,
+} from '@loopback/authentication-jwt';
+import { AuthorizationComponent } from '@loopback/authorization';
+
+import { MongoDataSource } from 'src/datasources';
+
 import { MySequence } from 'src/sequence';
+
+import dotenvExt from 'dotenv-extended';
+import { LoggerComponent } from 'src/components/logger';
+
+dotenvExt.load({
+	encoding: 'utf8',
+	silent: false,
+	path: '.env',
+	defaults: '.env.defaults',
+	schema: '.env.schema',
+	errorOnMissing: false,
+	errorOnExtra: false,
+	errorOnRegex: false,
+	includeProcessEnv: false,
+	assignToProcessEnv: true,
+	overrideProcessEnv: false,
+});
 
 export { ApplicationConfig };
 
@@ -21,9 +49,6 @@ export class SimplizeTripApiApplication extends BootMixin(
 ) {
 	constructor(options: ApplicationConfig = {}) {
 		super(options);
-
-		this.bind(LoggerBindings.LOGGER).toClass(LoggerService);
-		this.bind(RestBindings.SequenceActions.LOG_ERROR).toProvider(LogErrorProvider);
 
 		// Set up default home page
 		this.static('/', appRoot + '/public');
@@ -49,22 +74,47 @@ export class SimplizeTripApiApplication extends BootMixin(
 			},
 		};
 
-		// this.setupLogging();
+		// Mount logger system
+		this.component(LoggerComponent);
+
+		// Mount authentication system
+		this.component(AuthenticationComponent);
+
+		// Mount Authorization system
+		this.component(AuthorizationComponent);
+
+		// Mount jwt component
+		this.component(JWTAuthenticationComponent);
+
+		// Bind datasource
+		this.setUpDataSource();
+
+		//new
+		this.bind(UserServiceBindings.USER_SERVICE).toClass(MyUserService);
+
+		this.setUpBindings();
 	}
 
-	// add morgan
+	setUpDataSource(): void {
+		this.dataSource(MongoDataSource, UserServiceBindings.DATASOURCE_NAME);
+	}
 
-	// private setupLogging() {
-	// 	const morganFactory = (config?: morgan.Options<Request, Response>) => {
-	// 		this.debug('Morgan configuration', config);
-	// 		return morgan('combined', config);
-	// 	};
+	setUpBindings(): void {
+		// Bind bcrypt hash services
+		// this.bind(PasswordHasherBindings.ROUNDS).to(10);
+		// this.bind(PasswordHasherBindings.PASSWORD_HASHER).toClass(BcryptHasher);
+		// this.bind(TokenServiceBindings.TOKEN_SERVICE).toClass(JWTService);
 
-	// 	const defaultConfig: morgan.Options<Request, Response> = {};
+		// this.bind(UserServiceBindings.USER_SERVICE).toClass(UserManagementService);
+		// this.add(createBindingFromClass(SecuritySpecEnhancer));
 
-	// 	this.expressMiddleware(morganFactory, defaultConfig, {
-	// 		injectConfiguration: 'watch',
-	// 		key: 'middleware.morgan',
-	// 	});
-	// }
+		// this.add(createBindingFromClass(ErrorHandlerMiddlewareProvider));
+
+		this.bind(TokenServiceBindings.TOKEN_SECRET).to(process.env.TOKEN_SECRET ?? crypto.randomBytes(32).toString('hex'));
+		this.bind(TokenServiceBindings.TOKEN_EXPIRES_IN).to(process.env.TOKEN_EXPIRES_IN ?? '21600');
+
+		this.bind(RefreshTokenServiceBindings.REFRESH_SECRET).to(process.env.REFRESH_SECRET ?? crypto.randomBytes(32).toString('hex'));
+		this.bind(RefreshTokenServiceBindings.REFRESH_EXPIRES_IN).to(process.env.REFRESH_EXPIRES_IN ?? '216000');
+		this.bind(RefreshTokenServiceBindings.REFRESH_ISSUER).to(process.env.REFRESH_ISSUER ?? 'loopback4');
+	}
 }
