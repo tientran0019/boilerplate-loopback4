@@ -56,12 +56,12 @@ export class SimplizeTripApiApplication extends BootMixin(
 		// Set up the custom sequence
 		this.sequence(MySequence);
 
-		// Customize @loopback/rest-explorer configuration here
-		this.configure(RestExplorerBindings.COMPONENT).to({
-			path: '/explorer',
-			indexTitle: 'SimplizeTrip API Explorer',
-		});
-		this.component(RestExplorerComponent);
+		// Mount logger system
+		this.component(LoggerComponent);
+
+		this.setUpAuth();
+
+		this.setUpExplorers();
 
 		this.projectRoot = __dirname;
 		// Customize @loopback/boot Booter Conventions here
@@ -73,10 +73,9 @@ export class SimplizeTripApiApplication extends BootMixin(
 				nested: true,
 			},
 		};
+	}
 
-		// Mount logger system
-		this.component(LoggerComponent);
-
+	setUpAuth(): void {
 		// Mount authentication system
 		this.component(AuthenticationComponent);
 
@@ -87,28 +86,7 @@ export class SimplizeTripApiApplication extends BootMixin(
 		this.component(JWTAuthenticationComponent);
 
 		// Bind datasource
-		this.setUpDataSource();
-
-		//new
-		this.bind(UserServiceBindings.USER_SERVICE).toClass(MyUserService);
-
-		this.setUpBindings();
-	}
-
-	setUpDataSource(): void {
 		this.dataSource(MongoDataSource, UserServiceBindings.DATASOURCE_NAME);
-	}
-
-	setUpBindings(): void {
-		// Bind bcrypt hash services
-		// this.bind(PasswordHasherBindings.ROUNDS).to(10);
-		// this.bind(PasswordHasherBindings.PASSWORD_HASHER).toClass(BcryptHasher);
-		// this.bind(TokenServiceBindings.TOKEN_SERVICE).toClass(JWTService);
-
-		// this.bind(UserServiceBindings.USER_SERVICE).toClass(UserManagementService);
-		// this.add(createBindingFromClass(SecuritySpecEnhancer));
-
-		// this.add(createBindingFromClass(ErrorHandlerMiddlewareProvider));
 
 		this.bind(TokenServiceBindings.TOKEN_SECRET).to(process.env.TOKEN_SECRET ?? crypto.randomBytes(32).toString('hex'));
 		this.bind(TokenServiceBindings.TOKEN_EXPIRES_IN).to(process.env.TOKEN_EXPIRES_IN ?? '21600');
@@ -116,5 +94,16 @@ export class SimplizeTripApiApplication extends BootMixin(
 		this.bind(RefreshTokenServiceBindings.REFRESH_SECRET).to(process.env.REFRESH_SECRET ?? crypto.randomBytes(32).toString('hex'));
 		this.bind(RefreshTokenServiceBindings.REFRESH_EXPIRES_IN).to(process.env.REFRESH_EXPIRES_IN ?? '216000');
 		this.bind(RefreshTokenServiceBindings.REFRESH_ISSUER).to(process.env.REFRESH_ISSUER ?? 'loopback4');
+
+		this.bind(UserServiceBindings.USER_SERVICE).toClass(MyUserService);
+	}
+
+	setUpExplorers(): void {
+		// Customize @loopback/rest-explorer configuration here
+		this.configure(RestExplorerBindings.COMPONENT).to({
+			path: '/explorer',
+			indexTitle: 'SimplizeTrip API Explorer',
+		});
+		this.component(RestExplorerComponent);
 	}
 }
