@@ -14,7 +14,6 @@ import crypto from 'crypto';
 import { AuthenticationComponent } from '@loopback/authentication';
 import {
 	JWTAuthenticationComponent,
-	MyUserService,
 	RefreshTokenServiceBindings,
 	TokenServiceBindings,
 	UserServiceBindings,
@@ -27,6 +26,8 @@ import { MySequence } from 'src/sequence';
 
 import dotenvExt from 'dotenv-extended';
 import { LoggerComponent } from 'src/components/logger';
+import { BcryptHasher, UserManagementService } from './services';
+import { PasswordHasherBindings } from './keys';
 
 dotenvExt.load({
 	encoding: 'utf8',
@@ -59,9 +60,9 @@ export class SimplizeTripApiApplication extends BootMixin(
 		// Mount logger system
 		this.component(LoggerComponent);
 
-		this.setUpAuth();
+		this.setupAuth();
 
-		this.setUpExplorers();
+		this.setupExplorers();
 
 		this.projectRoot = __dirname;
 		// Customize @loopback/boot Booter Conventions here
@@ -75,7 +76,7 @@ export class SimplizeTripApiApplication extends BootMixin(
 		};
 	}
 
-	setUpAuth(): void {
+	setupAuth(): void {
 		// Mount authentication system
 		this.component(AuthenticationComponent);
 
@@ -87,6 +88,10 @@ export class SimplizeTripApiApplication extends BootMixin(
 
 		// Bind datasource
 		this.dataSource(MongoDataSource, UserServiceBindings.DATASOURCE_NAME);
+		this.dataSource(MongoDataSource, RefreshTokenServiceBindings.DATASOURCE_NAME);
+
+		this.bind(PasswordHasherBindings.ROUNDS).to(10);
+		this.bind(PasswordHasherBindings.PASSWORD_HASHER).toClass(BcryptHasher);
 
 		this.bind(TokenServiceBindings.TOKEN_SECRET).to(process.env.TOKEN_SECRET ?? crypto.randomBytes(32).toString('hex'));
 		this.bind(TokenServiceBindings.TOKEN_EXPIRES_IN).to(process.env.TOKEN_EXPIRES_IN ?? '21600');
@@ -95,10 +100,10 @@ export class SimplizeTripApiApplication extends BootMixin(
 		this.bind(RefreshTokenServiceBindings.REFRESH_EXPIRES_IN).to(process.env.REFRESH_EXPIRES_IN ?? '216000');
 		this.bind(RefreshTokenServiceBindings.REFRESH_ISSUER).to(process.env.REFRESH_ISSUER ?? 'loopback4');
 
-		this.bind(UserServiceBindings.USER_SERVICE).toClass(MyUserService);
+		this.bind(UserServiceBindings.USER_SERVICE).toClass(UserManagementService);
 	}
 
-	setUpExplorers(): void {
+	setupExplorers(): void {
 		// Customize @loopback/rest-explorer configuration here
 		this.configure(RestExplorerBindings.COMPONENT).to({
 			path: '/explorer',

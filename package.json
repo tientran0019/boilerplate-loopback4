@@ -65,6 +65,7 @@
     "dotenv": "^16.3.1",
     "dotenv-extended": "^2.9.0",
     "helmet": "^7.0.0",
+    "isemail": "^3.2.0",
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
     "loopback-connector-kv-redis": "^4.0.0",

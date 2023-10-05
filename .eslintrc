@@ -20,7 +20,16 @@
 			2,
 			"tab",
 			{
-				"SwitchCase": 1
+				"SwitchCase": 1,
+				// "FunctionExpression": {
+				// 	"body": 1,
+				// 	"parameters": 2
+				// },
+				// "MemberExpression": 1,
+				"ignoredNodes": [
+					"PropertyDefinition",
+					"VariableDeclarator"
+				]
 			}
 		],
 		"array-bracket-spacing": [
@@ -40,9 +49,15 @@
 				"ignoreRestSiblings": true
 			}
 		],
-		"semi": ["error", "always"],
+		"semi": [
+			"error",
+			"always"
+		],
 		"no-empty": "warn",
-        "no-cond-assign": ["error", "always"]
+		"no-cond-assign": [
+			"error",
+			"always"
+		]
 	},
 	"globals": {
 		"fetch": true,
