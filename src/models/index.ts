@@ -1,11 +1,16 @@
-// Copyright IBM Corp. 2019,2020. All Rights Reserved.
-// Node module: loopback4-example-shopping
-// This file is licensed under the MIT License.
-// License text available at https://opensource.org/licenses/MIT
+/* --------------------------------------------------------
+* Author Tien Tran
+* Email tientran0019@gmail.com
+* Phone 0972970075
+*
+* Created: 2023-10-06 16:20:53
+
+* Last updated on: 2023-10-06 16:20:53
+* Last updated by: Tien Tran
+*------------------------------------------------------- */
 
 export * from './user.model';
 export * from './user-credentials.model';
-export * from './user-with-password.model';
 export * from './email-template.model';
-export * from './reset-password-init.model';
-export * from './key-and-password.model';
+export * from './refresh-token.model';
+export * from './revoked-token.model';

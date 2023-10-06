@@ -1,3 +1,13 @@
+/* --------------------------------------------------------
+* Author Tien Tran
+* Email tientran0019@gmail.com
+* Phone 0972970075
+*
+* Created:
+
+* Last updated on:
+* Last updated by: Tien Tran
+*------------------------------------------------------- */
 
 import { RestBindings } from '@loopback/rest';
 

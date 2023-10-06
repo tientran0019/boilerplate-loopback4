@@ -14,17 +14,18 @@ export class EmailService {
 	 */
 	private static async setupTransporter() {
 		return createTransport({
-			host: process.env.SMTP_SERVER,
-			port: +process.env.SMTP_PORT!,
+			host: process.env.EMAIL_SERVER,
+			port: +process.env.EMAIL_PORT!,
 			secure: false, // upgrade later with STARTTLS
 			auth: {
-				user: process.env.SMTP_USERNAME,
-				pass: process.env.SMTP_PASSWORD,
+				user: process.env.EMAIL_USERNAME,
+				pass: process.env.EMAIL_PASSWORD,
 			},
 		});
 	}
 	async sendResetPasswordMail(user: User): Promise<SentMessageInfo> {
 		const transporter = await EmailService.setupTransporter();
+
 		const emailTemplate = new EmailTemplate({
 			to: user.email,
 			subject: 'Reset Password Request',
@@ -33,13 +34,14 @@ export class EmailService {
           <p>Hello, ${user.fullName}</p>
           <p style="color: red;">We received a request to reset the password for your account with email address: ${user.email}</p>
           <p>To reset your password click on the link provided below</p>
-          <a href="${process.env.APPLICATION_URL}/reset-password-finish.html?resetKey=${user.resetKey}">Reset your password link</a>
+          <a href="${process.env.APPLICATION_URL}/reset-password-finish.html?resetKey=123">Reset your password link</a>
           <p>If you didn’t request to reset your password, please ignore this email or reset your password to protect your account.</p>
           <p>Thanks</p>
           <p>SimplizeTrip</p>
       </div>
       `,
 		});
+
 		return transporter.sendMail(emailTemplate);
 	}
 }

@@ -1,7 +1,13 @@
-// Copyright IBM Corp. 2019,2020. All Rights Reserved.
-// Node module: loopback4-example-shopping
-// This file is licensed under the MIT License.
-// License text available at https://opensource.org/licenses/MIT
+/* --------------------------------------------------------
+* Author Tien Tran
+* Email tientran0019@gmail.com
+* Phone 0972970075
+*
+* Created: 2023-10-06 17:12:10
+
+* Last updated on: 2023-10-06 17:12:10
+* Last updated by: Tien Tran
+*------------------------------------------------------- */
 
 import { Getter, inject } from '@loopback/core';
 import {
@@ -10,18 +16,15 @@ import {
 	juggler,
 	repository,
 } from '@loopback/repository';
-import { User, UserCredentials } from 'src/models';
+
+import { User, UserCredentials, UserRelations } from 'src/models';
 
 import { UserCredentialsRepository } from './user-credentials.repository';
 
-export type Credentials = {
-	email: string;
-	password: string;
-};
-
 export class UserRepository extends DefaultCrudRepository<
 	User,
-	typeof User.prototype.id
+	typeof User.prototype.id,
+	UserRelations
 > {
 	public readonly userCredentials: HasOneRepositoryFactory<
 		UserCredentials,
@@ -29,7 +32,8 @@ export class UserRepository extends DefaultCrudRepository<
 	>;
 
 	constructor(
-		@inject('datasources.mongo') dataSource: juggler.DataSource,
+		@inject('datasources.mongo')
+		dataSource: juggler.DataSource,
 		@repository.getter('UserCredentialsRepository')
 		protected userCredentialsRepositoryGetter: Getter<UserCredentialsRepository>,
 	) {
@@ -37,6 +41,10 @@ export class UserRepository extends DefaultCrudRepository<
 		this.userCredentials = this.createHasOneRepositoryFactoryFor(
 			'userCredentials',
 			userCredentialsRepositoryGetter,
+		);
+		this.registerInclusionResolver(
+			'userCredentials',
+			this.userCredentials.inclusionResolver,
 		);
 	}
 

@@ -1,3 +1,4 @@
+import { authenticate } from '@loopback/authentication';
 import { inject } from '@loopback/core';
 import {
 	Request,
@@ -7,7 +8,7 @@ import {
 	response,
 } from '@loopback/rest';
 
-import { LoggerBindings, LoggerService } from 'src/components/logger';
+import { LoggerBindings, LoggerService } from 'src/extensions/logger';
 
 import { random } from 'src/utils/random';
 
@@ -25,6 +26,7 @@ const PING_RESPONSE: ResponseObject = {
 					greeting: { type: 'string' },
 					date: { type: 'string' },
 					url: { type: 'string' },
+					deviceID: { type: 'string' },
 					headers: {
 						type: 'object',
 						properties: {
@@ -49,6 +51,7 @@ export class PingController {
 	protected logger: LoggerService;
 
 	// Map to `GET /ping`
+	@authenticate('jwt')
 	@get('/ping')
 	@response(200, PING_RESPONSE)
 	ping(): object {
@@ -60,6 +63,7 @@ export class PingController {
 			date: new Date(),
 			url: this.req.url,
 			headers: Object.assign({}, this.req.headers),
+			deviceID: this.req.get('X-Device-ID'),
 		};
 	}
 }

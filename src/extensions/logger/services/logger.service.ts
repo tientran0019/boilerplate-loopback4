@@ -1,3 +1,14 @@
+/* --------------------------------------------------------
+* Author Tien Tran
+* Email tientran0019@gmail.com
+* Phone 0972970075
+*
+* Created: 2023-10-06 15:24:08
+
+* Last updated on: 2023-10-06 15:24:08
+* Last updated by: Tien Tran
+*------------------------------------------------------- */
+
 import winston, { Logger, QueryOptions } from 'winston';
 import DailyRotateFile from 'winston-daily-rotate-file';
 import appRoot from 'app-root-path';

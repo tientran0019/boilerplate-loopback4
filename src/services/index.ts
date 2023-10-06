@@ -3,8 +3,4 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-export * from './hash.password.bcryptjs';
-export * from './basic.authorizor';
-export * from './hash.password.bcryptjs';
 export * from './email.service';
-export * from './user.service';

@@ -1,19 +1,36 @@
+/* --------------------------------------------------------
+* Author Tien Tran
+* Email tientran0019@gmail.com
+* Phone 0972970075
+*
+* Created: 2023-10-06 16:21:20
+
+* Last updated on: 2023-10-06 16:21:20
+* Last updated by: Tien Tran
+*------------------------------------------------------- */
+
 import { Entity, hasOne, model, property } from '@loopback/repository';
 import { UserCredentials } from './user-credentials.model';
+import { UserRoles, UserStatus } from 'src/constants';
 
 @model({
-	// name: 'users',
+	name: 'users',
+	// jsonSchema: {
+	// 	uniqueItems: true,
+	// },
 	settings: {
-		indexes: {
-			uniqueEmail: {
-				keys: {
-					email: 1,
-				},
-				options: {
-					unique: true,
-				},
-			},
-		},
+		limit: 10,
+		// where: { deleted: false },
+		// indexes: {
+		// 	uniqueEmail: {
+		// 		keys: {
+		// 			email: 1,
+		// 		},
+		// 		options: {
+		// 			unique: true,
+		// 		},
+		// 	},
+		// },
 	},
 })
 export class User extends Entity {
@@ -30,11 +47,26 @@ export class User extends Entity {
 	})
 	fullName: string;
 
+	// must keep it
+	@property({
+		type: 'string',
+		index: true,
+		jsonSchema: {
+			transform: ['toLowerCase'],
+		},
+	})
+	username: string;
+
 	@property({
 		type: 'string',
 		required: true,
+		index: true,
+		jsonSchema: {
+			format: 'email',
+			transform: ['toLowerCase'],
+		},
 	})
-	email: string;
+	readonly email: string;
 
 	@property({
 		type: 'boolean',
@@ -48,40 +80,40 @@ export class User extends Entity {
 
 	@property({
 		type: 'string',
+		index: true,
 	})
 	phone?: string;
 
 	@property({
 		type: 'date',
-		default: () => new Date(),
+		// defaultFn: 'now',
+		jsonSchema: {
+			readOnly: true,
+		},
 	})
-	lastLogin?: Date;
-
-	@property({
-		type: 'array',
-		itemType: 'string',
-	})
-	roles?: string[];
+	readonly lastLogin?: Date;
 
 	@property({
 		type: 'string',
+		default: 'customer',
+		// hidden: true,
+		jsonSchema: {
+			enum: Object.values(UserRoles),
+			readOnly: true,
+		},
 	})
-	resetKey?: string;
-
-	@property({
-		type: 'number',
-	})
-	resetCount: number;
-
-	@property({
-		type: 'string',
-	})
-	resetTimestamp: string;
+	readonly role: string;
 
 	@property({
 		type: 'string',
+		default: 'active',
+		jsonSchema: {
+			enum: Object.values(UserStatus),
+			readOnly: true,
+		},
 	})
-	resetKeyTimestamp: string;
+	readonly status: string;
+
 
 	@hasOne(() => UserCredentials, { keyTo: 'userId' })
 	userCredentials: UserCredentials;
