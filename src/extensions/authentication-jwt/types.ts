@@ -6,6 +6,14 @@
 import { UserProfile } from '@loopback/security';
 
 /**
+ * Built-in roles
+ */
+export const OWNER = '$owner';
+export const EVERYONE = '$everyone';
+export const AUTHENTICATED = '$authenticated';
+export const UNAUTHENTICATED = '$unauthenticated';
+
+/**
  * Describes the token object that returned by the refresh token service functions.
  */
 export type TokenObject = {
@@ -24,7 +32,7 @@ export interface IRefreshTokenService {
 	 * Generate a refresh token, bind it with the given user profile + access
 	 * token, then store them in backend.
 	 */
-	generateToken(userProfile: UserProfile, token: string): Promise<TokenObject>;
+	generateToken(userProfile: UserProfile, token: string, extraData: object): Promise<TokenObject>;
 
 	/**
 	 * Refresh the access token bound with the given refresh token.

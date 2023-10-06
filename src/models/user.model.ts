@@ -50,7 +50,9 @@ export class User extends Entity {
 	// must keep it
 	@property({
 		type: 'string',
-		index: true,
+		index: {
+			unique: true,
+		},
 		jsonSchema: {
 			transform: ['toLowerCase'],
 		},
@@ -60,7 +62,9 @@ export class User extends Entity {
 	@property({
 		type: 'string',
 		required: true,
-		index: true,
+		index: {
+			unique: true,
+		},
 		jsonSchema: {
 			format: 'email',
 			transform: ['toLowerCase'],
@@ -91,7 +95,7 @@ export class User extends Entity {
 			readOnly: true,
 		},
 	})
-	readonly lastLogin?: Date;
+	lastLogin?: Date;
 
 	@property({
 		type: 'string',
@@ -112,7 +116,7 @@ export class User extends Entity {
 			readOnly: true,
 		},
 	})
-	readonly status: string;
+	status: string;
 
 
 	@hasOne(() => UserCredentials, { keyTo: 'userId' })

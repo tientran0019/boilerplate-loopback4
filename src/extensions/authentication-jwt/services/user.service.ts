@@ -46,7 +46,6 @@ export class UserService implements PUserService<User, Credentials> {
 		const foundUser = await this.userRepository.findOne({
 			where: { email: email },
 		});
-		console.log('DEV ~ file: user.service.ts:49 ~ UserService ~ verifyCredentials ~ foundUser:', foundUser);
 
 		if (!foundUser) {
 			throw new HttpErrors.Unauthorized(invalidCredentialsError);
@@ -111,5 +110,15 @@ export class UserService implements PUserService<User, Credentials> {
 			throw new HttpErrors.Unauthorized(userNotfound);
 		}
 		return foundUser;
+	}
+
+	async updateLastLogin(user: User): Promise<void> {
+		try {
+			user.lastLogin = new Date();
+
+			await this.userRepository.update(user);
+		} catch (error) {
+			// ignore
+		}
 	}
 }

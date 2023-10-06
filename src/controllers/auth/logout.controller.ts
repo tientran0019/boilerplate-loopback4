@@ -17,17 +17,15 @@ import {
 	TokenServiceBindings,
 } from 'src/extensions/authentication-jwt';
 import { inject } from '@loopback/core';
-import { repository } from '@loopback/repository';
 import {
 	HttpErrors,
-	param,
 	post,
+	Request,
 	requestBody,
+	RestBindings,
 	SchemaObject,
 } from '@loopback/rest';
-import { SecurityBindings, UserProfile } from '@loopback/security';
 
-import { UserRepository } from 'src/repositories';
 
 // Describes the type of grant object taken in by method "refresh"
 type RefreshGrant = {
@@ -58,12 +56,10 @@ export class LogoutController {
 	constructor(
 		@inject(TokenServiceBindings.TOKEN_SERVICE)
 		public tokenService: TokenService,
-		@inject(SecurityBindings.USER, { optional: true })
-		public user: UserProfile,
-		@repository(UserRepository)
-		protected userRepository: UserRepository,
 		@inject(RefreshTokenServiceBindings.REFRESH_TOKEN_SERVICE)
 		public refreshService: RefreshTokenService,
+		@inject(RestBindings.Http.REQUEST)
+		private req: Request,
 	) { }
 
 	@authenticate('jwt')
@@ -91,12 +87,10 @@ export class LogoutController {
 		},
 	})
 	async logout(
-		@param.header.string('Authorization') accessToken: string,
 		@requestBody(RefreshGrantRequestBody) refreshGrant: RefreshGrant,
 	): Promise<object> {
 		try {
-			const token = accessToken?.replace(/bearer /i, '');
-			console.log('DEV ~ file: user.controller.ts:215 ~ UserController ~ token:', token);
+			const token = this.req.get('Authorization')?.replace(/bearer /i, '');
 
 			if (!token) {
 				throw new HttpErrors.Unauthorized(`Error verifying token : Invalid Token`);
@@ -105,7 +99,6 @@ export class LogoutController {
 			await this.tokenService.revokeToken(token);
 
 			await this.refreshService.revokeToken(refreshGrant.refreshToken);
-			console.log('DEV ~ file: user.controller.ts:224 ~ UserController ~ refreshGrant.refreshToken:', refreshGrant.refreshToken);
 
 			return {
 				success: true,

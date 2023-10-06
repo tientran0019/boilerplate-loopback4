@@ -1,4 +1,14 @@
-import { authenticate } from '@loopback/authentication';
+/* --------------------------------------------------------
+* Author Tien Tran
+* Email tientran0019@gmail.com
+* Phone 0972970075
+*
+* Created: 2023-10-06 23:42:27
+
+* Last updated on: 2023-10-06 23:42:27
+* Last updated by: Tien Tran
+*------------------------------------------------------- */
+
 import { inject } from '@loopback/core';
 import {
 	Request,
@@ -26,7 +36,9 @@ const PING_RESPONSE: ResponseObject = {
 					greeting: { type: 'string' },
 					date: { type: 'string' },
 					url: { type: 'string' },
-					deviceID: { type: 'string' },
+					ipAddress: { type: 'string' },
+					useragent: { type: 'string' },
+					clientId: { type: 'string' },
 					headers: {
 						type: 'object',
 						properties: {
@@ -51,8 +63,9 @@ export class PingController {
 	protected logger: LoggerService;
 
 	// Map to `GET /ping`
-	@authenticate('jwt')
 	@get('/ping')
+	// @authenticate('jwt')
+	// @authorize({ allowedRoles: [], deniedRoles: [] })
 	@response(200, PING_RESPONSE)
 	ping(): object {
 		this.logger.log('info', `greeting ${random()}`);
@@ -63,7 +76,9 @@ export class PingController {
 			date: new Date(),
 			url: this.req.url,
 			headers: Object.assign({}, this.req.headers),
-			deviceID: this.req.get('X-Device-ID'),
+			useragent: this.req.get('user-agent'),
+			clientId: this.req.get('x-client-id'),
+			ipAddress: this.req.ip,
 		};
 	}
 }

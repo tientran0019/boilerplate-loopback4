@@ -42,6 +42,7 @@ export class RefreshTokenService {
 	async generateToken(
 		userProfile: UserProfile,
 		token: string,
+		dataExtra: object,
 	): Promise<TokenObject> {
 		const data = {
 			token: uuidv4(),
@@ -55,6 +56,7 @@ export class RefreshTokenService {
 			refreshToken: refreshToken,
 		};
 		await this.refreshTokenRepository.create({
+			...dataExtra,
 			userId: userProfile[securityId],
 			id: result.refreshToken,
 		});

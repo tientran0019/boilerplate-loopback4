@@ -19,15 +19,14 @@ import {
 	TokenService,
 } from 'src/extensions/authentication-jwt';
 import { inject } from '@loopback/core';
-import { repository } from '@loopback/repository';
 import {
 	post,
+	Request,
 	requestBody,
+	RestBindings,
 	SchemaObject,
 } from '@loopback/rest';
 import { UserProfile } from '@loopback/security';
-
-import { UserRepository } from 'src/repositories';
 
 const CredentialsSchema: SchemaObject = {
 	type: 'object',
@@ -59,10 +58,10 @@ export class LoginController {
 		public tokenService: TokenService,
 		@inject(UserServiceBindings.USER_SERVICE)
 		public userService: UserService,
-		@repository(UserRepository)
-		protected userRepository: UserRepository,
 		@inject(RefreshTokenServiceBindings.REFRESH_TOKEN_SERVICE)
 		public refreshService: RefreshTokenService,
+		@inject(RestBindings.Http.REQUEST)
+		private req: Request,
 	) { }
 
 	/**
@@ -105,7 +104,14 @@ export class LoginController {
 		const tokens = await this.refreshService.generateToken(
 			userProfile,
 			accessToken,
+			{
+				useragent: this.req.get('user-agent'),
+				clientId: this.req.get('x-client-id'),
+				ipAddress: this.req.ip,
+			}
 		);
+
+		await this.userService.updateLastLogin(user);
 
 		return tokens;
 	}

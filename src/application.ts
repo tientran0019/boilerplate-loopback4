@@ -22,6 +22,7 @@ import { LoggerComponent } from 'src/extensions/logger';
 import {
 	JWTAuthenticationComponent,
 	RefreshTokenServiceBindings,
+	SECURITY_SCHEME_SPEC,
 	TokenServiceBindings,
 } from 'src/extensions/authentication-jwt';
 

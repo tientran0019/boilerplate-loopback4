@@ -4,6 +4,8 @@
 // License text available at https://opensource.org/licenses/MIT
 
 import { registerAuthenticationStrategy } from '@loopback/authentication';
+import { AuthorizationTags } from '@loopback/authorization';
+
 import {
 	Application,
 	Binding,
@@ -24,6 +26,7 @@ import { UserService, RefreshTokenService } from './services';
 import { JWTAuthenticationStrategy } from './services/jwt.auth.strategy';
 import { TokenService } from './services/jwt.service';
 import { SecuritySpecEnhancer } from './services/security.spec.enhancer';
+import { MyAuthorizationProvider } from './providers/authorizer.provider';
 
 export class JWTAuthenticationComponent implements Component {
 	bindings: Binding[] = [
@@ -55,6 +58,11 @@ export class JWTAuthenticationComponent implements Component {
 		Binding.bind(RefreshTokenServiceBindings.REFRESH_ISSUER).to(
 			RefreshTokenConstants.REFRESH_ISSUER_VALUE,
 		),
+
+		Binding
+			.bind('authorizationProviders.my-authorizer-provider')
+			.toProvider(MyAuthorizationProvider)
+			.tag(AuthorizationTags.AUTHORIZER),
 	];
 	constructor(@inject(CoreBindings.APPLICATION_INSTANCE) app: Application) {
 		registerAuthenticationStrategy(app, JWTAuthenticationStrategy);
