@@ -107,6 +107,10 @@ export class LoginController {
 			{
 				useragent: this.req.get('user-agent'),
 				clientId: this.req.get('x-client-id'),
+				location: {
+					lat: this.req.get('x-client-latitude'),
+					long: this.req.get('x-client-longitude'),
+				},
 				ipAddress: this.req.ip,
 			}
 		);

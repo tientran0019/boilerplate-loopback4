@@ -14,7 +14,7 @@ import { UserCredentials } from './user-credentials.model';
 import { UserRoles, UserStatus } from 'src/constants';
 
 @model({
-	name: 'users',
+	// name: 'Users',
 	// jsonSchema: {
 	// 	uniqueItems: true,
 	// },
@@ -38,6 +38,9 @@ export class User extends Entity {
 		type: 'string',
 		id: true,
 		mongodb: { dataType: 'ObjectID' },
+		jsonSchema: {
+			readOnly: true,
+		},
 	})
 	id: string;
 
@@ -55,9 +58,10 @@ export class User extends Entity {
 		},
 		jsonSchema: {
 			transform: ['toLowerCase'],
+			readOnly: true,
 		},
 	})
-	username: string;
+	readonly username: string;
 
 	@property({
 		type: 'string',
@@ -74,13 +78,19 @@ export class User extends Entity {
 
 	@property({
 		type: 'boolean',
+		jsonSchema: {
+			readOnly: true,
+		},
 	})
-	emailVerified?: boolean;
+	readonly emailVerified?: boolean;
 
 	@property({
 		type: 'string',
+		jsonSchema: {
+			readOnly: true,
+		},
 	})
-	verificationToken?: string;
+	readonly verificationToken?: string;
 
 	@property({
 		type: 'string',
@@ -116,7 +126,7 @@ export class User extends Entity {
 			readOnly: true,
 		},
 	})
-	status: string;
+	readonly status: string;
 
 
 	@hasOne(() => UserCredentials, { keyTo: 'userId' })

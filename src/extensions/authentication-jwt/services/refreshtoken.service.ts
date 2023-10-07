@@ -94,11 +94,7 @@ export class RefreshTokenService {
 	}
 
 	async revokeToken(refreshToken: string): Promise<void> {
-		try {
-			await this.refreshTokenRepository.updateById(refreshToken, { revoked: true, revokedAt: new Date() });
-		} catch (e) {
-			// ignore
-		}
+		await this.refreshTokenRepository.updateById(refreshToken, { revoked: true, revokedAt: new Date() });
 	}
 
 	/**

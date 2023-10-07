@@ -3,7 +3,7 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-import { UserService as PUserService } from '@loopback/authentication';
+import { UserService as IUserService } from '@loopback/authentication';
 import { model, property, repository } from '@loopback/repository';
 import { HttpErrors } from '@loopback/rest';
 import { securityId, UserProfile } from '@loopback/security';
@@ -30,7 +30,7 @@ export class NewUserRequest extends User {
 	password: string;
 }
 
-export class UserService implements PUserService<User, Credentials> {
+export class UserService implements IUserService<User, Credentials> {
 	constructor(
 		@repository(UserRepository) public userRepository: UserRepository,
 	) { }
@@ -86,13 +86,21 @@ export class UserService implements PUserService<User, Credentials> {
 	async createUser(userWithPassword: NewUserRequest): Promise<User> {
 		const { password, ...userData } = userWithPassword;
 
-		if (!userData.username) {
-			userData.username = userData.email.split('@')[0];
-		}
+		// const foundUser = await this.userRepository.findOne({
+		// 	where: { email: userWithPassword.email },
+		// });
+
+		// if (foundUser) {
+		// 	throw new HttpErrors.Conflict('Email value is already taken1');
+		// }
+
+		// if (!userData.username) {
+		// 	userData.username = userData.email.split('@')[0];
+		// }
 
 		const passwordHashed = await hashPassword(password);
 
-		const user = await this.userRepository.create({ ...userData, role: 'customer' });
+		const user = await this.userRepository.create({ ...userData, role: 'customer', username: userData.email.split('@')[0] });
 
 		user.id = user.id?.toString();
 

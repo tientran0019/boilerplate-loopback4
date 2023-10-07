@@ -22,7 +22,9 @@ export class RefreshToken extends Entity {
 	})
 	id: string;
 
-	@belongsTo(() => User)
+	@belongsTo(() => User, {}, {
+		mongodb: { dataType: 'ObjectID' },
+	})
 	userId: string;
 
 	// @property({
@@ -63,6 +65,11 @@ export class RefreshToken extends Entity {
 		type: 'object',
 	})
 	userAgent: object;
+
+	@property({
+		type: 'geo-point',
+	})
+	location?: object;
 
 	// Define well-known properties here
 
