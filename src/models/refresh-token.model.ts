@@ -27,11 +27,11 @@ export class RefreshToken extends Entity {
 	})
 	userId: string;
 
-	// @property({
-	// 	type: 'string',
-	// 	required: true,
-	// })
-	// refreshToken: string;
+	// TODO adđ current token to can be revoked it in the future, when blocking the user or remotely logout
+	@property({
+		type: 'string',
+	})
+	currentToken?: string;
 
 	@property({
 		type: 'boolean',
@@ -62,12 +62,12 @@ export class RefreshToken extends Entity {
 	clientId?: string;
 
 	@property({
-		type: 'object',
+		type: 'string',
 	})
-	userAgent: object;
+	userAgent: string;
 
 	@property({
-		type: 'geo-point',
+		type: 'GeoPoint',
 	})
 	location?: object;
 

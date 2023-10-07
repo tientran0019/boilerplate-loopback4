@@ -86,13 +86,13 @@ export class UserService implements IUserService<User, Credentials> {
 	async createUser(userWithPassword: NewUserRequest): Promise<User> {
 		const { password, ...userData } = userWithPassword;
 
-		// const foundUser = await this.userRepository.findOne({
-		// 	where: { email: userWithPassword.email },
-		// });
+		const foundUser = await this.userRepository.findOne({
+			where: { email: userWithPassword.email },
+		});
 
-		// if (foundUser) {
-		// 	throw new HttpErrors.Conflict('Email value is already taken1');
-		// }
+		if (foundUser) {
+			throw new HttpErrors.Conflict('Email value is already taken');
+		}
 
 		// if (!userData.username) {
 		// 	userData.username = userData.email.split('@')[0];
