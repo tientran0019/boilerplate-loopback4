@@ -10,7 +10,7 @@
 *------------------------------------------------------- */
 
 import { MixinTarget, Constructor } from '@loopback/core';
-import { Model, PropertyDefinition, model, property } from '@loopback/repository';
+import { Model, PropertyDefinition, property } from '@loopback/repository';
 
 export interface TimestampMixinConfig {
 	index?: {
@@ -24,7 +24,6 @@ export interface TimestampMixinConfig {
 // Define the mixin class
 export function TimestampMixin<T extends MixinTarget<Constructor<Model>>>(superClass: T, config: TimestampMixinConfig = { index: { createdAt: true, updatedAt: true } }) {
 	// Add a timestamp property
-	@model()
 	class TimestampMixinClass extends superClass {
 		@property({
 			type: 'number',
