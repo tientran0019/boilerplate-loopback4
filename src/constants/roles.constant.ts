@@ -10,8 +10,8 @@
 *------------------------------------------------------- */
 
 export enum UserRoles {
-	ADMIN = 'admin',
 	CUSTOMER = 'customer',
+	ADMIN = 'admin',
 }
 
 export enum UserStatus {

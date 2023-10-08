@@ -99,6 +99,11 @@ export class User extends Entity {
 	phone?: string;
 
 	@property({
+		type: 'string',
+	})
+	country?: string;
+
+	@property({
 		type: 'date',
 		// defaultFn: 'now',
 		jsonSchema: {
@@ -106,6 +111,19 @@ export class User extends Entity {
 		},
 	})
 	lastLogin?: Date;
+
+	@property({
+		type: 'number',
+		default: () => +new Date(),
+		jsonSchema: {
+			readOnly: true,
+			pattern: '\\d{13}',
+			errorMessage: {
+				pattern: 'Invalid phone timestamp',
+			},
+		},
+	})
+	readonly createdAt: number;
 
 	@property({
 		type: 'string',

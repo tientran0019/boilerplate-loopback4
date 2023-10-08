@@ -74,17 +74,18 @@ export class ProfileController {
 				'application/json': {
 					schema: getModelSchemaRef(User, {
 						title: 'UserData',
+						exclude: ['id', 'email', 'username', 'role', 'status', 'emailVerified', 'verificationToken', 'lastLogin', 'createdAt'],
 					}),
 				},
 			},
 		})
-		userData: User,
+		userData: Omit<User, 'id' | 'email' | 'username' | 'role' | 'status' | 'emailVerified' | 'verificationToken' | 'lastLogin' | 'createdAt'>, // Pick<User, 'id' | 'email' | 'username' | 'role' | 'status' | 'emailVerified' | 'verificationToken' | 'lastLogin' | 'createdAt'> or User & { newProperty: string }
 	): Promise<User> {
 		const userId = this.currentUser[securityId];
 
 		await this.userService.findUserById(userId);
 
-		await this.userRepository.updateById(userId, _.omit(userData, ['email', 'username', 'role', 'status', 'emailVerified', 'verificationToken', 'lastLogin']));
+		await this.userRepository.updateById(userId, _.omit(userData, ['id', 'email', 'username', 'role', 'status', 'emailVerified', 'verificationToken', 'lastLogin', 'createdAt']));
 
 		return this.userService.findUserById(userId);
 	}

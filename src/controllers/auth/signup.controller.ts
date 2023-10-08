@@ -52,6 +52,7 @@ export class SignupController {
 				'application/json': {
 					schema: getModelSchemaRef(NewUserRequest, {
 						title: 'NewUser',
+						exclude: ['id', 'username', 'role', 'status', 'emailVerified', 'verificationToken', 'lastLogin', 'createdAt'],
 					}),
 				},
 			},

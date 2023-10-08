@@ -67,6 +67,11 @@ export class RefreshToken extends Entity {
 	userAgent: string;
 
 	@property({
+		type: 'string',
+	})
+	address?: string;
+
+	@property({
 		type: 'GeoPoint',
 	})
 	location?: object;

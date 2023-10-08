@@ -28,8 +28,8 @@ export class UserCredentials extends Entity {
 			maxLength: 30,
 			errorMessage: {
 				// Corresponding error messages
-				minLength: 'Name should be at least 8 characters.',
-				maxLength: 'Name should not exceed 30 characters.',
+				minLength: 'Password should be at least 8 characters.',
+				maxLength: 'Password should not exceed 30 characters.',
 			},
 		},
 	})

@@ -7,7 +7,7 @@ import { UserService as IUserService } from '@loopback/authentication';
 import { model, property, repository } from '@loopback/repository';
 import { HttpErrors } from '@loopback/rest';
 import { securityId, UserProfile } from '@loopback/security';
-import { UserStatus } from 'src/constants';
+import { UserRoles, UserStatus } from 'src/constants';
 
 import { User, UserWithRelations } from 'src/models';
 import { UserRepository } from 'src/repositories';
@@ -27,6 +27,15 @@ export class NewUserRequest extends User {
 	@property({
 		type: 'string',
 		required: true,
+		jsonSchema: {
+			minLength: 8,
+			maxLength: 30,
+			errorMessage: {
+				// Corresponding error messages
+				minLength: 'Password should be at least 8 characters.',
+				maxLength: 'Password should not exceed 30 characters.',
+			},
+		},
 	})
 	password: string;
 }
@@ -108,7 +117,7 @@ export class UserService implements IUserService<User, Credentials> {
 
 		const passwordHashed = await hashPassword(password);
 
-		const user = await this.userRepository.create({ ...userData, role: 'customer', username: userData.email.split('@')[0] });
+		const user = await this.userRepository.create({ ...userData, role: UserRoles.CUSTOMER, status: UserStatus.ACTIVE, username: userData.email.split('@')[0] });
 
 		user.id = user.id?.toString();
 
