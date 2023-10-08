@@ -21,10 +21,8 @@ import {
 	post,
 	requestBody,
 } from '@loopback/rest';
-import { pick } from 'lodash';
 
 import { User } from 'src/models';
-import { validateCredentials } from 'src/utils/validator';
 
 export class SignupController {
 	constructor(
@@ -59,15 +57,12 @@ export class SignupController {
 		})
 		newUserRequest: NewUserRequest,
 	): Promise<User> {
-		// ensure a valid email value and password value
-		validateCredentials(pick(newUserRequest, ['email', 'password']));
-
 		try {
 			return await this.userService.createUser(newUserRequest);
 		} catch (error) {
 			// MongoError 11000 duplicate key
-			if (error.code === 11000 && error.errmsg.includes('index: uniqueEmail')) {
-				throw new HttpErrors.Conflict('Email value is already taken');
+			if (error.code === 11000) {
+				throw new HttpErrors.Conflict(`${Object.entries(error.keyValue).flat().join(' ')} value is already taken`);
 			} else {
 				throw error;
 			}

@@ -17,22 +17,19 @@ import { TimestampMixin } from 'src/mixins/timestamp.mixin';
 
 @model({
 	// name: 'Users',
-	// jsonSchema: {
-	// 	uniqueItems: true,
-	// },
 	settings: {
 		limit: 10,
 		// where: { deleted: false },
-		indexes: {
-			uniqueEmail: {
-				keys: {
-					email: 1,
-				},
-				options: {
-					unique: true,
-				},
-			},
-		},
+		// indexes: {
+		// 	uniqueEmail: {
+		// 		keys: {
+		// 			email: 1,
+		// 		},
+		// 		options: {
+		// 			unique: true,
+		// 		},
+		// 	},
+		// },
 	},
 })
 export class User extends TimestampMixin(Entity) {
@@ -52,19 +49,6 @@ export class User extends TimestampMixin(Entity) {
 	})
 	fullName: string;
 
-	// must keep it
-	@property({
-		type: 'string',
-		index: {
-			unique: true,
-		},
-		jsonSchema: {
-			transform: ['toLowerCase'],
-			readOnly: true,
-		},
-	})
-	readonly username: string;
-
 	@property({
 		type: 'string',
 		required: true,
@@ -77,6 +61,18 @@ export class User extends TimestampMixin(Entity) {
 		},
 	})
 	readonly email: string;
+
+	@property({
+		type: 'string',
+		index: {
+			unique: true,
+		},
+		jsonSchema: {
+			transform: ['toLowerCase'],
+			readOnly: true,
+		},
+	})
+	readonly username: string;
 
 	@property({
 		type: 'boolean',
@@ -96,7 +92,9 @@ export class User extends TimestampMixin(Entity) {
 
 	@property({
 		type: 'string',
-		index: true,
+		index: {
+			sparse: true,
+		},
 	})
 	phone?: string;
 
