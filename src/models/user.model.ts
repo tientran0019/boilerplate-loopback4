@@ -10,8 +10,10 @@
 *------------------------------------------------------- */
 
 import { Entity, hasOne, model, property } from '@loopback/repository';
-import { UserCredentials } from './user-credentials.model';
 import { UserRoles, UserStatus } from 'src/constants';
+import { UserCredentials } from './user-credentials.model';
+
+import { TimestampMixin } from 'src/mixins/timestamp.mixin';
 
 @model({
 	// name: 'Users',
@@ -21,19 +23,19 @@ import { UserRoles, UserStatus } from 'src/constants';
 	settings: {
 		limit: 10,
 		// where: { deleted: false },
-		// indexes: {
-		// 	uniqueEmail: {
-		// 		keys: {
-		// 			email: 1,
-		// 		},
-		// 		options: {
-		// 			unique: true,
-		// 		},
-		// 	},
-		// },
+		indexes: {
+			uniqueEmail: {
+				keys: {
+					email: 1,
+				},
+				options: {
+					unique: true,
+				},
+			},
+		},
 	},
 })
-export class User extends Entity {
+export class User extends TimestampMixin(Entity) {
 	@property({
 		type: 'string',
 		id: true,
@@ -104,26 +106,13 @@ export class User extends Entity {
 	country?: string;
 
 	@property({
-		type: 'date',
+		type: 'number',
 		// defaultFn: 'now',
 		jsonSchema: {
 			readOnly: true,
 		},
 	})
-	lastLogin?: Date;
-
-	@property({
-		type: 'number',
-		default: () => +new Date(),
-		jsonSchema: {
-			readOnly: true,
-			pattern: '\\d{13}',
-			errorMessage: {
-				pattern: 'Invalid phone timestamp',
-			},
-		},
-	})
-	readonly createdAt: number;
+	lastLogin?: number;
 
 	@property({
 		type: 'string',

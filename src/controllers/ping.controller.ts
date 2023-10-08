@@ -39,6 +39,7 @@ const PING_RESPONSE: ResponseObject = {
 					ipAddress: { type: 'string' },
 					useragent: { type: 'string' },
 					clientId: { type: 'string' },
+					language: { type: 'string' },
 					headers: {
 						type: 'object',
 						properties: {
@@ -70,7 +71,7 @@ export class PingController {
 	@response(200, PING_RESPONSE)
 	ping(): object {
 		this.logger.log('info', `greeting ${random()}`);
-
+		const language: string = this.req.acceptsLanguages(['en', 'zh']) || 'en';
 		// Reply with a greeting, the current time, the url, and request headers
 		return {
 			greeting: 'Hello from LoopBack ' + random(),
@@ -80,6 +81,7 @@ export class PingController {
 			useragent: this.req.get('user-agent'),
 			clientId: this.req.get('x-client-id'),
 			ipAddress: this.req.ip,
+			language,
 		};
 	}
 }

@@ -142,7 +142,7 @@ export class UserService implements IUserService<User, Credentials> {
 
 	async updateLastLogin(user: User): Promise<void> {
 		try {
-			user.lastLogin = new Date();
+			user.lastLogin = +new Date();
 
 			await this.userRepository.update(user);
 		} catch (error) {

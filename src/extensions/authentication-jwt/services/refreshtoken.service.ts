@@ -125,7 +125,7 @@ export class RefreshTokenService {
 
 			await this.revokeCurrentToken(userRefreshData.currentToken!);
 
-			await this.refreshTokenRepository.updateById(refreshToken, { revoked: true, revokedAt: new Date() });
+			await this.refreshTokenRepository.updateById(refreshToken, { revoked: true, revokedAt: +new Date() });
 		} catch (error) {
 			// ignore
 		}

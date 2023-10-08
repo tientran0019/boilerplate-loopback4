@@ -12,9 +12,10 @@
 import { belongsTo, Entity, model, property } from '@loopback/repository';
 
 import { User } from './user.model';
+import { TimestampMixin } from 'src/mixins/timestamp.mixin';
 
 @model({ settings: { strict: false } })
-export class RefreshToken extends Entity {
+export class RefreshToken extends TimestampMixin(Entity) {
 	@property({
 		type: 'string',
 		id: true,
@@ -27,7 +28,7 @@ export class RefreshToken extends Entity {
 	})
 	userId: string;
 
-	// TODO adđ current token to can be revoked it in the future, when blocking the user or remotely logout
+	// TODO add current token to can be revoked it in the future, when blocking the user or remotely logout
 	@property({
 		type: 'string',
 	})
@@ -40,15 +41,9 @@ export class RefreshToken extends Entity {
 	revoked?: boolean;
 
 	@property({
-		type: 'date',
+		type: 'number',
 	})
-	revokedAt?: Date;
-
-	@property({
-		type: 'date',
-		default: () => new Date(),
-	})
-	createdAt?: Date;
+	revokedAt?: number;
 
 	@property({
 		type: 'string',
