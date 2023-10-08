@@ -62,9 +62,14 @@ export class TokenService implements ITokenService {
 	}
 
 	async revokeToken(token: string): Promise<boolean> {
-		await this.revokedTokenRepository.set(token, { token });
+		try {
+			await this.revokedTokenRepository.set(token, { token });
 
-		return true;
+			return true;
+		} catch (error) {
+			// ignore
+			return false;
+		}
 	}
 
 	async generateToken(userProfile: UserProfile): Promise<string> {

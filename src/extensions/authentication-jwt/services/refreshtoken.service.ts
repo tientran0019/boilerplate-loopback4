@@ -59,6 +59,7 @@ export class RefreshTokenService {
 			...dataExtra,
 			userId: userProfile[securityId],
 			id: result.refreshToken,
+			currentToken: token,
 		});
 		return result;
 	}
@@ -66,6 +67,7 @@ export class RefreshTokenService {
 	/*
 	 * Refresh the access token bound with the given refresh token.
 	 */
+
 	async refreshToken(refreshToken: string): Promise<TokenObject> {
 		try {
 			if (!refreshToken) {
@@ -75,13 +77,24 @@ export class RefreshTokenService {
 			}
 
 			const userRefreshData = await this.verifyToken(refreshToken);
+
+			await this.revokeCurrentToken(userRefreshData.currentToken!);
+
 			const user = await this.userService.findUserById(
 				userRefreshData.userId.toString(),
 			);
-			const userProfile: UserProfile =
-				this.userService.convertToUserProfile(user);
+
+			const userProfile: UserProfile = this.userService.convertToUserProfile(user);
+
 			// create a JSON Web Token based on the user profile
 			const token = await this.tokenService.generateToken(userProfile);
+
+			try {
+				// store token to refresh token
+				await this.refreshTokenRepository.updateById(refreshToken, { currentToken: token });
+			} catch (e) {
+				// ignore
+			}
 
 			return {
 				accessToken: token,
@@ -93,8 +106,29 @@ export class RefreshTokenService {
 		}
 	}
 
+	async revokeCurrentToken(token: string): Promise<void> {
+		try {
+			// revoke old assess token if token is valid
+			if (token) {
+				await this.tokenService.verifyToken(token);
+
+				await this.tokenService.revokeToken(token);
+			}
+		} catch (e) {
+			// ignore
+		}
+	}
+
 	async revokeToken(refreshToken: string): Promise<void> {
-		await this.refreshTokenRepository.updateById(refreshToken, { revoked: true, revokedAt: new Date() });
+		try {
+			const userRefreshData = await this.verifyToken(refreshToken);
+
+			await this.revokeCurrentToken(userRefreshData.currentToken!);
+
+			await this.refreshTokenRepository.updateById(refreshToken, { revoked: true, revokedAt: new Date() });
+		} catch (error) {
+			// ignore
+		}
 	}
 
 	/**

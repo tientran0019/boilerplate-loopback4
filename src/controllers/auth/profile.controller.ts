@@ -7,6 +7,7 @@ import {
 } from '@loopback/rest';
 import { SecurityBindings, securityId, UserProfile } from '@loopback/security';
 import _ from 'lodash';
+import { UserService, UserServiceBindings } from 'src/extensions/authentication-jwt';
 
 import { User } from 'src/models';
 import { UserRepository } from 'src/repositories';
@@ -28,6 +29,8 @@ export class ProfileController {
 		public currentUser: UserProfile,
 		@repository(UserRepository)
 		protected userRepository: UserRepository,
+		@inject(UserServiceBindings.USER_SERVICE)
+		protected userService: UserService,
 	) { }
 
 	@authenticate('jwt')
@@ -46,7 +49,8 @@ export class ProfileController {
 	})
 	async whoAmI(): Promise<User> {
 		const userId = this.currentUser[securityId];
-		return this.userRepository.findById(userId);
+
+		return this.userService.findUserById(userId);
 	}
 
 	@authenticate('jwt')
@@ -78,8 +82,10 @@ export class ProfileController {
 	): Promise<User> {
 		const userId = this.currentUser[securityId];
 
+		await this.userService.findUserById(userId);
+
 		await this.userRepository.updateById(userId, _.omit(userData, ['email', 'username', 'role', 'status', 'emailVerified', 'verificationToken', 'lastLogin']));
 
-		return this.userRepository.findById(userId);
+		return this.userService.findUserById(userId);
 	}
 }

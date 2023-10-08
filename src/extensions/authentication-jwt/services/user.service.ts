@@ -7,6 +7,7 @@ import { UserService as IUserService } from '@loopback/authentication';
 import { model, property, repository } from '@loopback/repository';
 import { HttpErrors } from '@loopback/rest';
 import { securityId, UserProfile } from '@loopback/security';
+import { UserStatus } from 'src/constants';
 
 import { User, UserWithRelations } from 'src/models';
 import { UserRepository } from 'src/repositories';
@@ -35,6 +36,14 @@ export class UserService implements IUserService<User, Credentials> {
 		@repository(UserRepository) public userRepository: UserRepository,
 	) { }
 
+	verifyUserStatus(user: User): boolean {
+		if (user.status !== UserStatus.ACTIVE) {
+			throw new HttpErrors.Unauthorized('User is inactive');
+		}
+
+		return true;
+	}
+
 	async verifyCredentials(credentials: Credentials): Promise<User> {
 		const { email, password } = credentials;
 
@@ -49,9 +58,6 @@ export class UserService implements IUserService<User, Credentials> {
 
 		if (!foundUser) {
 			throw new HttpErrors.Unauthorized(invalidCredentialsError);
-		}
-		if (foundUser.status !== 'active') {
-			throw new HttpErrors.Unauthorized('User is inactive');
 		}
 
 		const credentialsFound = await this.userRepository.findCredentials(
@@ -74,6 +80,8 @@ export class UserService implements IUserService<User, Credentials> {
 	}
 
 	convertToUserProfile(user: User): UserProfile {
+		this.verifyUserStatus(user);
+
 		return {
 			[securityId]: user.id.toString(),
 			name: user.fullName,
@@ -117,6 +125,9 @@ export class UserService implements IUserService<User, Credentials> {
 		if (!foundUser) {
 			throw new HttpErrors.Unauthorized(userNotfound);
 		}
+
+		this.verifyUserStatus(foundUser);
+
 		return foundUser;
 	}
 
