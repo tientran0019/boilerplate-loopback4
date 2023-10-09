@@ -16,14 +16,14 @@ import { MongoDataSource } from 'src/datasources';
 import { User, Category, Article, ArticleRelations } from '../models';
 import { UserRepository } from './user.repository';
 import { CategoryRepository } from './category.repository';
-import { FindBySlugRepositoryMixin } from 'src/mixins/find-by-slug.mixin/repository.find-by-slug.mixin';
+import { SlugifyRepositoryMixin, SlugifyRepositoryMixinOptions } from 'src/extensions/slugify';
 
-export class ArticleRepository extends FindBySlugRepositoryMixin<
+export class ArticleRepository extends SlugifyRepositoryMixin<
 	Article,
+	typeof Article.prototype.id,
 	Constructor<
 		DefaultCrudRepository<Article, typeof Article.prototype.id, ArticleRelations>
-	>,
-	ArticleRelations
+	>
 >(DefaultCrudRepository) {
 
 	public readonly creator: BelongsToAccessor<User, typeof Article.prototype.id>;
@@ -34,8 +34,9 @@ export class ArticleRepository extends FindBySlugRepositoryMixin<
 		@inject('datasources.mongo') dataSource: MongoDataSource,
 		@repository.getter('UserRepository') protected userRepositoryGetter: Getter<UserRepository>,
 		@repository.getter('CategoryRepository') protected categoryRepositoryGetter: Getter<CategoryRepository>,
+		protected readonly configs: SlugifyRepositoryMixinOptions = { fields: ['title'] },
 	) {
-		super(Article, dataSource);
+		super(Article, dataSource, configs);
 		this.category = this.createBelongsToAccessorFor('category', categoryRepositoryGetter,);
 		this.registerInclusionResolver('category', this.category.inclusionResolver);
 		this.creator = this.createBelongsToAccessorFor('creator', userRepositoryGetter,);

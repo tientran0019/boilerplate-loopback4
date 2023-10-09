@@ -14,7 +14,7 @@ import { Entity, belongsTo, model, property } from '@loopback/repository';
 import { TimestampMixin } from 'src/mixins/timestamp.mixin';
 import { User } from './user.model';
 import { Category } from './category.model';
-import { FindBySlugModelMixin } from 'src/mixins/find-by-slug.mixin';
+import { SlugifyEntityMixin } from 'src/extensions/slugify';
 
 @model({
 	settings: {
@@ -22,7 +22,7 @@ import { FindBySlugModelMixin } from 'src/mixins/find-by-slug.mixin';
 		order: 'publishedDate DESC',
 	},
 })
-export class Article extends FindBySlugModelMixin(TimestampMixin(Entity)) {
+export class Article extends SlugifyEntityMixin(TimestampMixin(Entity)) {
 	@property({
 		type: 'string',
 		id: true,

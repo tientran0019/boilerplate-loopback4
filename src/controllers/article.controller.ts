@@ -44,7 +44,7 @@ export class ArticleController {
 		})
 		article: Omit<Article, 'id'>,
 	): Promise<Article> {
-		return this.articleRepository.createWithSlug(article as any);
+		return this.articleRepository.create(article);
 	}
 
 	@get('/articles/count')
