@@ -27,6 +27,10 @@ import {
 	SchemaObject,
 } from '@loopback/rest';
 import { UserProfile } from '@loopback/security';
+import debugFactory from 'debug';
+import { inspect } from 'util';
+
+const debug = debugFactory('controller:auth:login');
 
 const CredentialsSchema: SchemaObject = {
 	type: 'object',
@@ -93,6 +97,7 @@ export class LoginController {
 	async login(
 		@requestBody(CredentialsRequestBody) credentials: Credentials,
 	): Promise<TokenObject> {
+		debug('Credentials', inspect(credentials));
 		// ensure the user exists, and the password is correct
 		const user = await this.userService.verifyCredentials(credentials);
 

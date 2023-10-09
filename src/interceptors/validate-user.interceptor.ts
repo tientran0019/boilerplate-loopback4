@@ -93,3 +93,19 @@ class ValidationError extends Error {
 	code?: string;
 	statusCode?: number;
 }
+/*
+try {
+	// Add pre-invocation logic here
+	// Code from beforeRemote hooks go here
+	console.log('About to invoke a method.');
+	const result = await next();
+	// Add post-invocation logic here
+	// Code from afterRemote hooks go here
+	console.log('Method finished.');
+	return result;
+} catch (err) {
+	// Add error handling logic here
+	// Code from afterRemoteError hooks go here
+	console.log('Method failed: ', err);
+	throw err;
+} */

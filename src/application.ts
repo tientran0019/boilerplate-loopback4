@@ -82,7 +82,8 @@ export class SimplizeTripApiApplication extends BootMixin(
 		// Mount jwt component
 		this.component(JWTAuthenticationComponent);
 
-
+		// the lb4 can map the data (object, configs data, interceptor, etc...) to the constant via the binding func (Bindings CONSTANT) in the app. And then we can use these data everywhere, just need to @inject the CONSTANT into the Constructor func
+		// All off CONSTANTS need to be defined in the src/keys.ts file to easier management. Tips: Or we can use the property of Class: static readonly BINDING_KEY = string to defined the CONSTANT
 		this.bind(TokenServiceBindings.TOKEN_SECRET).to(process.env.TOKEN_SECRET ?? crypto.randomBytes(32).toString('hex'));
 		this.bind(TokenServiceBindings.TOKEN_EXPIRES_IN).to(process.env.TOKEN_EXPIRES_IN ?? '21600');
 

@@ -10,6 +10,8 @@
 *------------------------------------------------------- */
 
 export * from './user.model';
+export * from './article.model';
+export * from './category.model';
 export * from './user-credentials.model';
 export * from './email-template.model';
 export * from './refresh-token.model';

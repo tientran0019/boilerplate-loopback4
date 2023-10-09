@@ -10,9 +10,9 @@
 *------------------------------------------------------- */
 
 import { MixinTarget, Constructor } from '@loopback/core';
-import { Model, PropertyDefinition, property } from '@loopback/repository';
+import { Model, PropertyDefinition, model, property } from '@loopback/repository';
 
-export interface TimestampMixinConfig {
+export interface TimestampMixinOptions {
 	index?: {
 		createdAt?: object | boolean,
 		updatedAt?: object | boolean,
@@ -22,13 +22,14 @@ export interface TimestampMixinConfig {
 }
 
 // Define the mixin class
-export function TimestampMixin<T extends MixinTarget<Constructor<Model>>>(superClass: T, config: TimestampMixinConfig = { index: { createdAt: true, updatedAt: true } }) {
+export function TimestampMixin<T extends MixinTarget<Constructor<Model>>>(superClass: T, options: TimestampMixinOptions = { index: { createdAt: true, updatedAt: true } }) {
 	// Add a timestamp property
+	@model()
 	class TimestampMixinClass extends superClass {
 		@property({
 			type: 'number',
 			default: () => +new Date(),
-			index: config.index?.createdAt,
+			index: options.index?.createdAt,
 			jsonSchema: {
 				readOnly: true,
 				pattern: '\\d{13}',
@@ -36,14 +37,14 @@ export function TimestampMixin<T extends MixinTarget<Constructor<Model>>>(superC
 					pattern: 'Invalid phone timestamp',
 				},
 			},
-			...(config?.createdAt ?? {}),
+			...(options?.createdAt ?? {}),
 		})
 		readonly createdAt: number;
 
 		@property({
 			type: 'number',
 			default: () => +new Date(),
-			index: config.index?.createdAt,
+			index: options.index?.createdAt,
 			updateOnly: true, // Update only when the model is updated
 			jsonSchema: {
 				readOnly: true,
@@ -52,13 +53,13 @@ export function TimestampMixin<T extends MixinTarget<Constructor<Model>>>(superC
 					pattern: 'Invalid phone timestamp',
 				},
 			},
-			...(config?.createdAt ?? {}),
+			...(options?.createdAt ?? {}),
 		})
 		readonly updatedAt: number;
 
 		constructor(...args: any[]) {
 			super(...args);
-			this.updatedAt = +new Date();
+			// this.updatedAt = +new Date();
 		}
 	}
 
