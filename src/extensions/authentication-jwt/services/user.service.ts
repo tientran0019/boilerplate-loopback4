@@ -149,4 +149,26 @@ export class UserService implements IUserService<User, Credentials> {
 			// ignore
 		}
 	}
+
+	// async updatePassword(
+	// 	username: string,
+	// 	password: string,
+	// 	newPassword: string,
+	// ): Promise<User> {
+	// 	const user = await super.findOne({ where: { username } });
+	// 	const creds = user && (await this.credentials(user.id).get());
+	// 	if (!user || user.deleted || !creds || !creds.password) {
+	// 		throw new HttpErrors.Unauthorized(AuthenticateErrorKeys.UserDoesNotExist);
+	// 	} else if (!(await bcrypt.compare(password, creds.password))) {
+	// 		throw new HttpErrors.Unauthorized(AuthErrorKeys.WrongPassword);
+	// 	} else if (await bcrypt.compare(newPassword, creds.password)) {
+	// 		throw new HttpErrors.Unauthorized(
+	// 			'Password cannot be same as previous password!',
+	// 		);
+	// 	}
+	// 	await this.credentials(user.id).patch({
+	// 		password: await bcrypt.hash(newPassword, this.saltRounds),
+	// 	});
+	// 	return user;
+	// }
 }

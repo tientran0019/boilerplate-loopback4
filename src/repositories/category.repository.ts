@@ -9,23 +9,29 @@
 * Last updated by: Tien Tran
 *------------------------------------------------------- */
 
-import { inject, Getter } from '@loopback/core';
+import { inject, Getter, Constructor } from '@loopback/core';
 import { DefaultCrudRepository, repository, BelongsToAccessor } from '@loopback/repository';
 
 import { MongoDataSource } from 'src/datasources';
 import { Category, CategoryRelations, User } from 'src/models';
 import { UserRepository } from './user.repository';
+import { SlugifyRepositoryMixin, SlugifyRepositoryMixinOptions } from 'src/extensions/slugify';
 
-export class CategoryRepository extends DefaultCrudRepository<
+export class CategoryRepository extends SlugifyRepositoryMixin<
 	Category,
 	typeof Category.prototype.id,
-	CategoryRelations
-> {
+	Constructor<
+		DefaultCrudRepository<Category, typeof Category.prototype.id, CategoryRelations>
+	>
+>(DefaultCrudRepository) {
 
 	public readonly creator: BelongsToAccessor<User, typeof Category.prototype.id>;
 
 	constructor(
-		@inject('datasources.mongo') dataSource: MongoDataSource, @repository.getter('UserRepository') protected userRepositoryGetter: Getter<UserRepository>,
+		@inject('datasources.mongo') dataSource: MongoDataSource,
+		@repository.getter('UserRepository') protected userRepositoryGetter: Getter<UserRepository>,
+		protected readonly configs: SlugifyRepositoryMixinOptions = { fields: ['name'] },
+
 	) {
 		super(Category, dataSource);
 		this.creator = this.createBelongsToAccessorFor('creator', userRepositoryGetter,);

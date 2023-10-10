@@ -111,6 +111,22 @@ export class CategoryController {
 		return this.categoryRepository.findById(id, filter);
 	}
 
+	@get('/categories/slug/{slug}')
+	@response(200, {
+		description: 'Category model instance',
+		content: {
+			'application/json': {
+				schema: getModelSchemaRef(Category, { includeRelations: true }),
+			},
+		},
+	})
+	async findBySlug(
+		@param.path.string('slug') slug: string,
+		@param.filter(Category, { exclude: 'where' }) filter?: FilterExcludingWhere<Category>
+	): Promise<Category | null> {
+		return this.categoryRepository.findBySlug(slug, filter);
+	}
+
 	@patch('/categories/{id}')
 	@response(204, {
 		description: 'Category PATCH success',
