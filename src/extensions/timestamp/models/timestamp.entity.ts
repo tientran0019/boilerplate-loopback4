@@ -20,14 +20,14 @@ import { Entity, property } from '@loopback/repository';
  * namely, 'createdAt', 'updatedAt'
  * Its an abstract class so no repository class should be based on this.
  */
-export abstract class TimestampEntity extends Entity {
+export class TimestampEntity extends Entity {
 	@property({
 		type: 'number',
 		default: () => +new Date(),
 		index: true,
 		jsonSchema: {
 			readOnly: true,
-			pattern: '/^\d{13}$/',
+			pattern: /^\d{13}$/.source,
 			errorMessage: {
 				pattern: 'Invalid timestamp',
 			},
@@ -41,7 +41,7 @@ export abstract class TimestampEntity extends Entity {
 		updateOnly: true, // Update only when the model is updated
 		jsonSchema: {
 			readOnly: true,
-			pattern: '/^\d{13}$/',
+			pattern: /^\d{13}$/.source,
 			errorMessage: {
 				pattern: 'Invalid timestamp',
 			},

@@ -28,11 +28,11 @@ export function TimestampMixin<T extends MixinTarget<Constructor<Model>>>(superC
 	class TimestampMixinClass extends superClass {
 		@property({
 			type: 'number',
-			default: () => +new Date(),
+			// default: () => +new Date(),
 			index: options.index?.createdAt,
 			jsonSchema: {
 				readOnly: true,
-				pattern: '/^\d{13}$/',
+				pattern: /^\d{13}$/.source,
 				errorMessage: {
 					pattern: 'Invalid timestamp',
 				},
@@ -48,7 +48,7 @@ export function TimestampMixin<T extends MixinTarget<Constructor<Model>>>(superC
 			updateOnly: true, // Update only when the model is updated
 			jsonSchema: {
 				readOnly: true,
-				pattern: '/^\d{13}$/',
+				pattern: /^\d{13}$/.source,
 				errorMessage: {
 					pattern: 'Invalid timestamp',
 				},

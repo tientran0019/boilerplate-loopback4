@@ -9,12 +9,12 @@
 * Last updated by: Tien Tran
 *------------------------------------------------------- */
 
-import { Entity, belongsTo, model, property } from '@loopback/repository';
+import { belongsTo, model, property } from '@loopback/repository';
 
-import { TimestampMixin } from 'src/mixins/timestamp.mixin';
 import { User } from './user.model';
 import { Category } from './category.model';
 import { SlugifyEntityMixin } from 'src/extensions/slugify';
+import { TimestampEntity } from 'src/extensions/timestamp';
 
 @model({
 	settings: {
@@ -22,7 +22,7 @@ import { SlugifyEntityMixin } from 'src/extensions/slugify';
 		order: 'publishedDate DESC',
 	},
 })
-export class Article extends SlugifyEntityMixin(TimestampMixin(Entity)) {
+export class Article extends SlugifyEntityMixin(TimestampEntity) {
 	@property({
 		type: 'string',
 		id: true,
@@ -72,6 +72,12 @@ export class Article extends SlugifyEntityMixin(TimestampMixin(Entity)) {
 		type: 'number',
 		index: true,
 		updateOnly: true,
+		jsonSchema: {
+			pattern: /^\d{13}$/.source,
+			errorMessage: {
+				pattern: 'Invalid timestamp',
+			},
+		},
 	})
 	protected publishedDate?: number;
 

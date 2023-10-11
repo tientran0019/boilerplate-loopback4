@@ -33,7 +33,7 @@
     "start": "node -r tsconfig-paths/register -r source-map-support/register .",
     "predev": "yarn run clean",
     "dev": "tsc-watch --onSuccess \"node -r tsconfig-paths/register -r source-map-support/register --inspect .\"",
-    "dev:debug": "DEBUG=* tsc-watch --onSuccess \"node -r tsconfig-paths/register -r source-map-support/register --inspect .\"",
+    "dev:debug": "DEBUG='extensions:timestamp:*' tsc-watch --onSuccess \"node -r tsconfig-paths/register -r source-map-support/register --inspect .\"",
     "clean": "lb-clean dist *.tsbuildinfo .eslintcache",
     "rebuild": "yarn run clean && yarn run build"
   },
