@@ -1,4 +1,4 @@
-/* --------------------------------------------------------
+/** --------------------------------------------------------
 * Author Tien Tran
 * Email tientran0019@gmail.com
 * Phone 0972970075
@@ -19,8 +19,6 @@ import {
 } from '@loopback/rest';
 
 import { LoggerBindings, LoggerService } from 'src/extensions/logger';
-
-import { random } from 'src/utils/random';
 
 /**
  * OpenAPI response for ping()
@@ -70,11 +68,11 @@ export class PingController {
 	// @authorize({ allowedRoles: [], deniedRoles: [] })
 	@response(200, PING_RESPONSE)
 	ping(): object {
-		this.logger.log('info', `greeting ${random()}`);
+		this.logger.log('info', 'greeting');
 		const language: string = this.req.acceptsLanguages(['en', 'zh']) || 'en';
 		// Reply with a greeting, the current time, the url, and request headers
 		return {
-			greeting: 'Hello from LoopBack ' + random(),
+			greeting: 'Hello from LoopBack ',
 			date: new Date(),
 			url: this.req.url,
 			headers: Object.assign({}, this.req.headers),

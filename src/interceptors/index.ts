@@ -1,4 +1,4 @@
-/* --------------------------------------------------------
+/** --------------------------------------------------------
 * Author Tien Tran
 * Email tientran0019@gmail.com
 * Phone 0972970075
@@ -56,3 +56,4 @@
  * */
 
 export * from './validate-user.interceptor';
+export * from './test.interceptor';

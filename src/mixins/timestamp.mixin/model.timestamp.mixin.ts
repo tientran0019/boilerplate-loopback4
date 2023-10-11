@@ -1,4 +1,4 @@
-/* --------------------------------------------------------
+/** --------------------------------------------------------
 * Author Tien Tran
 * Email tientran0019@gmail.com
 * Phone 0972970075
@@ -32,9 +32,9 @@ export function TimestampMixin<T extends MixinTarget<Constructor<Model>>>(superC
 			index: options.index?.createdAt,
 			jsonSchema: {
 				readOnly: true,
-				pattern: '\\d{13}',
+				pattern: '/^\d{13}$/',
 				errorMessage: {
-					pattern: 'Invalid phone timestamp',
+					pattern: 'Invalid timestamp',
 				},
 			},
 			...(options?.createdAt ?? {}),
@@ -43,17 +43,17 @@ export function TimestampMixin<T extends MixinTarget<Constructor<Model>>>(superC
 
 		@property({
 			type: 'number',
-			default: () => +new Date(),
-			index: options.index?.createdAt,
+			// default: () => +new Date(),
+			index: options.index?.updatedAt,
 			updateOnly: true, // Update only when the model is updated
 			jsonSchema: {
 				readOnly: true,
-				pattern: '\\d{13}',
+				pattern: '/^\d{13}$/',
 				errorMessage: {
-					pattern: 'Invalid phone timestamp',
+					pattern: 'Invalid timestamp',
 				},
 			},
-			...(options?.createdAt ?? {}),
+			...(options?.updatedAt ?? {}),
 		})
 		readonly updatedAt: number;
 

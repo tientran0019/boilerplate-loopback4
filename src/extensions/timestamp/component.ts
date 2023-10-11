@@ -10,7 +10,8 @@
 *------------------------------------------------------- */
 
 import { Component, ProviderMap } from '@loopback/core';
-export class SlugifyComponent implements Component {
+
+export class TimestampComponent implements Component {
 	providers?: ProviderMap = {};
 
 	constructor() {

@@ -1,3 +1,13 @@
+/** --------------------------------------------------------
+* Author Tien Tran
+* Email tientran0019@gmail.com
+* Phone 0972970075
+*
+* Created: 2023-10-11 11:58:28
+
+* Last updated on: 2023-10-11 11:58:28
+* Last updated by: Tien Tran
+*------------------------------------------------------- */
 import {
 	Count,
 	CountSchema,
@@ -20,6 +30,7 @@ import {
 import { Article } from '../models';
 import { ArticleRepository } from '../repositories';
 
+/* The ArticleController class is responsible for handling CRUD operations for the Article model. */
 export class ArticleController {
 	constructor(
 		@repository(ArticleRepository)
@@ -153,7 +164,7 @@ export class ArticleController {
 		@param.path.string('id') id: string,
 		@requestBody() article: Article,
 	): Promise<void> {
-		await this.articleRepository.replaceById(id, article);
+		await this.articleRepository.replaceById(id, article, { admin: true });
 	}
 
 	@del('/articles/{id}')

@@ -1,4 +1,4 @@
-/* --------------------------------------------------------
+/** --------------------------------------------------------
 * Author Tien Tran
 * Email tientran0019@gmail.com
 * Phone 0972970075
@@ -11,6 +11,15 @@
 
 import _ from 'lodash';
 
+/**
+ * The `slugify` function takes a string as input and converts it into a URL-friendly slug format by
+ * removing special characters, replacing diacritics with their corresponding ASCII characters, and
+ * converting spaces to hyphens.
+ * @param {string} input - The input parameter is a string that you want to convert into a slug. A slug
+ * is a URL-friendly version of a string, typically used in URLs or file names.
+ * @returns The function `slugify` returns a string, which is the slugified version of the input
+ * string.
+ */
 const slugify = (input: string): string => {
 	input = input.replace(/á|à|ả|ạ|ã|ă|ắ|ằ|ẳ|ẵ|ặ|â|ấ|ầ|ẩ|ẫ|ậ/gi, 'a');
 	input = input.replace(/é|è|ẻ|ẽ|ẹ|ê|ế|ề|ể|ễ|ệ/gi, 'e');

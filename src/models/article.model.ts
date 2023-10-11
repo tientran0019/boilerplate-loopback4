@@ -1,4 +1,4 @@
-/* --------------------------------------------------------
+/** --------------------------------------------------------
 * Author Tien Tran
 * Email tientran0019@gmail.com
 * Phone 0972970075
@@ -71,8 +71,9 @@ export class Article extends SlugifyEntityMixin(TimestampMixin(Entity)) {
 	@property({
 		type: 'number',
 		index: true,
+		updateOnly: true,
 	})
-	publishedDate?: number;
+	protected publishedDate?: number;
 
 	@property({
 		type: 'string',

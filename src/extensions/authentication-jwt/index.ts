@@ -5,7 +5,7 @@
 
 // version 0.14.3
 
-export * from './jwt-authentication-component';
+export * from './component';
 export * from './keys';
 export * from './services';
 export * from './types';
