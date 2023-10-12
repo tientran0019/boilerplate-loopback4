@@ -10,9 +10,8 @@
 *------------------------------------------------------- */
 
 import {
-	DataObject,
-	Filter,
-	Options,
+	Entity,
+	juggler,
 } from '@loopback/repository';
 
 export interface Constructor<T> {
@@ -30,21 +29,10 @@ export interface AbstractConstructor<T> {
 export type MixinBaseClass<T> = Constructor<T> & AbstractConstructor<T>;
 
 export interface IBaseEntity {
-	slug: string;
+	createdAt: number;
+	updatedAt: number;
 }
 
-export interface SlugifyRepositoryMixinOptions {
-	fields?: string[] | string,
-}
-
-export interface ISlugifyRepositoryMixin<T extends object, ID, R> {
-	findUniqueSlug(entity: DataObject<T>, options?: Options): Promise<string>;
-	create(entity: DataObject<T>, options?: Options): Promise<T>;
-    // createAll(entities: DataObject<T>[], options?: Options): Promise<T[]>; TODO: Make it in the future
-    save(entity: T, options?: Options): Promise<T>;
-    update(entity: T, options?: Options): Promise<void>;
-	// updateAll(data: DataObject<T>, where?: Where<T>, options?: Options): Promise<Count>;
-    updateById(id: ID, data: DataObject<T>, options?: Options): Promise<void>;
-    replaceById(id: ID, data: DataObject<T>, options?: Options): Promise<void>;
-    findBySlug(slug: string, filter?: Filter<T>, options?: Options): Promise<T & R>;
+export interface ITimestampRepositoryMixin<E> {
+	definePersistedModel(entityClass: typeof Entity & { prototype: E }): typeof juggler.PersistedModel;
 }

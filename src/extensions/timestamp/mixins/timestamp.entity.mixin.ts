@@ -13,27 +13,46 @@ import { Constructor } from '@loopback/context';
 import { Entity, PropertyDefinition, property } from '@loopback/repository';
 import { AbstractConstructor, IBaseEntity } from '../types';
 
-export function SlugifyEntityMixin<
+export interface TimestampEntityMixinConfigs {
+	createdAt?: Partial<PropertyDefinition>
+	updatedAt?: Partial<PropertyDefinition>
+}
+
+export function TimestampEntityMixin<
 	T extends Entity,
 	S extends Constructor<T> | AbstractConstructor<T>,
->(base: S, config?: Partial<PropertyDefinition>): typeof base & Constructor<IBaseEntity> {
-	class SlugifyEntity extends base {
+>(base: S, config?: TimestampEntityMixinConfigs): typeof base & Constructor<IBaseEntity> {
+	class TimestampEntity extends base {
 		@property({
-			type: 'string',
-			index: {
-				unique: true,
-			},
+			type: 'number',
+			default: () => +new Date(),
+			index: true,
 			jsonSchema: {
 				readOnly: true,
-				pattern: '/^[a-z0-9]+([a-z0-9_-])*$/',
+				pattern: /^\d{13}$/.source,
 				errorMessage: {
-					pattern: 'Invalid slug',
+					pattern: 'Invalid timestamp',
 				},
 			},
-			...config,
+			...config?.createdAt,
 		})
-		slug: string;
+		readonly createdAt: number;
+
+		@property({
+			type: 'number',
+			index: true,
+			updateOnly: true, // Update only when the model is updated
+			jsonSchema: {
+				readOnly: true,
+				pattern: /^\d{13}$/.source,
+				errorMessage: {
+					pattern: 'Invalid timestamp',
+				},
+			},
+			...config?.updatedAt,
+		})
+		readonly updatedAt: number;
 	}
 
-	return SlugifyEntity;
+	return TimestampEntity;
 }

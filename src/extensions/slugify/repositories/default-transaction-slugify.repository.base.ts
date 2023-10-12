@@ -29,7 +29,7 @@ import { SlugifyEntity } from '../models/slugify-entity';
 
 import { SlugifyFilterBuilder } from '../utils/filter-builder';
 import slugify from '../utils/slugify';
-import { SlugifyRepositoryMixinOptions } from '../types';
+import { SlugifyRepositoryOptions } from '../types';
 
 /**
  * Slugify Repository for loopback's `DefaultTransactionalRepository`
@@ -58,7 +58,7 @@ export abstract class DefaultTransactionSlugifyRepository<
 			prototype: E;
 		},
 		dataSource: juggler.DataSource,
-		protected readonly configs: SlugifyRepositoryMixinOptions = {},
+		protected readonly configs: SlugifyRepositoryOptions = {},
 	) {
 		super(entityClass, dataSource);
 	}

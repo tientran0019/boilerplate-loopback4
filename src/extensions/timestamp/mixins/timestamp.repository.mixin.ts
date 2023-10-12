@@ -14,22 +14,22 @@ import { DefaultCrudRepository, Entity } from '@loopback/repository';
 import {
 	Constructor,
 	IBaseEntity,
-	ISlugifyRepositoryMixin,
+	ITimestampRepositoryMixin,
 	MixinBaseClass,
 } from '../types';
 import { TimestampRepository } from '../repositories';
 import extendPrototype from '../decorators/extend-prototype';
 
-export function SlugifyRepositoryMixin<
+export function TimestampRepositoryMixin<
 	E extends Entity & IBaseEntity,
 	ID,
 	T extends MixinBaseClass<DefaultCrudRepository<E, ID, R>>,
 	R extends object = {},
->(base: T): T & Constructor<ISlugifyRepositoryMixin<E, ID, R>> {
+>(base: T): T & Constructor<ITimestampRepositoryMixin<E>> {
 	// Using extendPrototype decorator here as Typescript doesn't support multilevel inheritance.
-	// This will result in a class extending `base` class overridden with `SlugifyRepository`'s methods and properties.
+	// This will result in a class extending `base` class overridden with `TimestampRepository`'s methods and properties.
 	@extendPrototype(TimestampRepository)
-	class SlugifyRepositoryExtended extends base { }
+	class TimestampRepositoryExtended extends base { }
 
-	return SlugifyRepositoryExtended as T & Constructor<ISlugifyRepositoryMixin<E, ID, R>>;
+	return TimestampRepositoryExtended as T & Constructor<ITimestampRepositoryMixin<E>>;
 }

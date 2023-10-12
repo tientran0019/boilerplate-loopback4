@@ -10,4 +10,4 @@
 *------------------------------------------------------- */
 
 export * from './timestamp.repository.base';
-export * from './default-transaction-timestamp.repository.base';
+export * from './transaction-timestamp.repository.base';

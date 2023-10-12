@@ -16,7 +16,7 @@ import { MongoDataSource } from 'src/datasources';
 import { User, Category, Article, ArticleRelations } from '../models';
 import { UserRepository } from './user.repository';
 import { CategoryRepository } from './category.repository';
-import { SlugifyRepositoryMixin, SlugifyRepositoryMixinOptions } from 'src/extensions/slugify';
+import { SlugifyRepositoryMixin, SlugifyRepositoryOptions } from 'src/extensions/slugify';
 import { TimestampEntity, TimestampRepository } from 'src/extensions/timestamp';
 
 export class ArticleRepository extends SlugifyRepositoryMixin<
@@ -35,7 +35,7 @@ export class ArticleRepository extends SlugifyRepositoryMixin<
 		@inject('datasources.mongo') dataSource: MongoDataSource,
 		@repository.getter('UserRepository') protected userRepositoryGetter: Getter<UserRepository>,
 		@repository.getter('CategoryRepository') protected categoryRepositoryGetter: Getter<CategoryRepository>,
-		protected readonly configs: SlugifyRepositoryMixinOptions = { fields: ['title'] },
+		protected readonly configs: SlugifyRepositoryOptions = { fields: ['title'] },
 	) {
 		super(Article, dataSource, configs);
 		this.category = this.createBelongsToAccessorFor('category', categoryRepositoryGetter,);

@@ -10,4 +10,5 @@
 *------------------------------------------------------- */
 
 export * from './repositories';
+export * from './mixins';
 export * from './models/timestamp.entity';

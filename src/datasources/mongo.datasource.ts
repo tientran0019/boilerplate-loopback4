@@ -24,15 +24,6 @@ export class MongoDataSource extends juggler.DataSource {
 		@inject('datasources.config.mongo', { optional: true })
 		dsConfig: AnyObject = config,
 	) {
-		Object.assign(dsConfig, {
-			url: process.env.MONGO_URL,
-			host: process.env.MONGO_HOST,
-			port: process.env.MONGO_PORT,
-			user: process.env.MONGO_USER,
-			password: process.env.MONGO_PASSWORD,
-			database: process.env.MONGO_DATABASE,
-		});
-
 		super(dsConfig);
 	}
 

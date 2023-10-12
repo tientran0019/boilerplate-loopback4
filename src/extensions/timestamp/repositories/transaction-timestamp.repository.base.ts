@@ -9,17 +9,22 @@
 * Last updated by: Tien Tran
 *------------------------------------------------------- */
 
-// DEVELOPMENT NOTE:
-// Please ensure that any modifications made to this file are also applied to the following locations:
-// 1) src/repositories/default-transaction-Timestamp.repository.base.ts
+//! DEVELOPMENT NOTE:
+//! Please ensure that any modifications made to this file are also applied to the following locations:
+//? 1) src/repositories/timestamp.repository.base.ts
 
 import {
 	DefaultTransactionalRepository,
 	Entity,
 	juggler,
 } from '@loopback/repository';
+import debugFactory from 'debug';
+
+import { inspect } from 'util';
 
 import { TimestampEntity } from '../models/timestamp.entity';
+
+const debug = debugFactory('extensions:timestamp:timestamp.repository.transactional');
 
 export class TimestampTransactionalRepository<
 	E extends TimestampEntity,
@@ -98,24 +103,40 @@ export class TimestampTransactionalRepository<
 		 */
 
 		modelClass.observe('before save', (ctx, next) => { // 'persist' operation will include the id and entires instance
-			console.log(`going to save ${ctx.Model.modelName}`);
+			debug(`Going to save ${ctx.Model.modelName}`);
+			// debug('ctx ', inspect(ctx, false, null, true));
+			debug('Data ', inspect(ctx.instance ?? ctx.data));
 
-			console.log('ctx.Model', ctx.Model.definition.properties);
-			console.log('this', entityClass.definition);
-			// if (ctx.options?.skipPropertyFilter) {
-			// 	return next();
-			// }
+			if (!ctx.isNewInstance) {
+				if (ctx.instance) {
+					debug('Replace by id of instance');
+					// ! Can't next when error ocurred in this case
 
-			// if (ctx.instance) {
-			// 	FILTERED_PROPERTIES.forEach(function (p) {
-			// 		ctx.instance.unsetAttribute(p);
-			// 	});
-			// } else {
-			// 	FILTERED_PROPERTIES.forEach(function (p) {
-			// 		delete ctx.data[p];
-			// 	});
-			// }
-			next(); // next(err)
+					return this.findById(ctx.instance.id).then((el) => {
+						debug('Current instance ', el);
+
+						ctx.instance.createdAt = el.createdAt;
+						ctx.instance.updatedAt = +new Date();
+
+						// next(); // TODO Can't next when error ocurred
+					}).catch((e) => {
+						debug('get current instance error ', e);
+
+						throw e;
+					});
+				} else {
+					debug('Patch by id of data');
+
+					delete ctx.data.createdAt;
+					ctx.data.updatedAt = +new Date();
+
+					next();
+				}
+			} else {
+				debug('Create new instance');
+
+				next(); // next(err)
+			}
 		});
 
 		return modelClass;

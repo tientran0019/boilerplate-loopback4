@@ -21,6 +21,8 @@ export interface Constructor<T> {
 	new(...args: any[]): T; // NOSONAR
 }
 
+// export type Constructor<T> = new (...args: any[]) => T;
+
 export interface AbstractConstructor<T> {
 	prototype: T;
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -33,7 +35,7 @@ export interface IBaseEntity {
 	slug: string;
 }
 
-export interface SlugifyRepositoryMixinOptions {
+export interface SlugifyRepositoryOptions {
 	fields?: string[] | string,
 }
 

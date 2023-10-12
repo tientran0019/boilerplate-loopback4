@@ -11,7 +11,7 @@
 
 //! DEVELOPMENT NOTE:
 //! Please ensure that any modifications made to this file are also applied to the following locations:
-//? 1) src/repositories/default-transaction-timestamp.repository.base.ts
+//? 1) src/repositories/transaction-timestamp.repository.base.ts
 
 import {
 	DefaultCrudRepository,
@@ -35,7 +35,6 @@ export class TimestampRepository<
 			prototype: E;
 		},
 		dataSource: juggler.DataSource,
-		// protected readonly configs: TimestampRepositoryMixinOptions = {},
 	) {
 		super(entityClass, dataSource);
 	}
@@ -98,7 +97,6 @@ export class TimestampRepository<
 		 * `this` set to the model constructor, e.g. `User`.
 		 * @end
 		 */
-
 		modelClass.observe('before save', (ctx, next) => { // 'persist' operation will include the id and entires instance
 			debug(`Going to save ${ctx.Model.modelName}`);
 			// debug('ctx ', inspect(ctx, false, null, true));
@@ -107,17 +105,22 @@ export class TimestampRepository<
 			if (!ctx.isNewInstance) {
 				if (ctx.instance) {
 					debug('Replace by id of instance');
+					// ! Can't next when error ocurred in this case
 
-					this.findById(ctx.instance.id).then((el) => {
+					return this.findById(ctx.instance.id).then((el) => {
+						debug('Current instance ', el);
+
 						ctx.instance.createdAt = el.createdAt;
 						ctx.instance.updatedAt = +new Date();
 
-						next();
+						// next(); // TODO Can't next when error ocurred
 					}).catch((e) => {
-						next(e);
+						debug('get current instance error ', e);
+
+						throw e;
 					});
 				} else {
-					debug('Patch by id of app');
+					debug('Patch by id of data');
 
 					delete ctx.data.createdAt;
 					ctx.data.updatedAt = +new Date();

@@ -29,7 +29,7 @@ import { SlugifyEntity } from '../models/slugify-entity';
 
 import { SlugifyFilterBuilder } from '../utils/filter-builder';
 import slugify from '../utils/slugify';
-import { SlugifyRepositoryMixinOptions } from '../types';
+import { SlugifyRepositoryOptions } from '../types';
 
 export abstract class SlugifyRepository<
 	E extends SlugifyEntity,
@@ -41,12 +41,13 @@ export abstract class SlugifyRepository<
 			prototype: E;
 		},
 		dataSource: juggler.DataSource,
-		protected readonly configs: SlugifyRepositoryMixinOptions = {},
+		protected readonly configs: SlugifyRepositoryOptions = {},
 	) {
 		super(entityClass, dataSource);
 	}
 
 	private async generateUniqueSlug(entity: DataObject<E & { slug: string, [key: string]: string | undefined }>): Promise<string> {
+		console.log('DEV ~ file: slugify.repository.base.ts:50 ~ generateUniqueSlug ~ entity:', entity);
 		let fields: string[] | string = this.configs?.fields ?? ['title'];
 		if (_.isString(fields)) {
 			fields = [fields];
@@ -62,6 +63,7 @@ export abstract class SlugifyRepository<
 		}
 
 		let slug = slugify(input);
+
 
 		const regex = slug === '0' ? new RegExp('^([0-9]+)$') : new RegExp(`^${slug}(-[0-9]+){0,2}$`);
 
