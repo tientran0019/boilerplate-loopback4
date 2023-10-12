@@ -16,28 +16,12 @@ import { AuthorizationComponent } from '@loopback/authorization';
 
 import { MySequence } from 'src/sequence';
 
-import dotenvExt from 'dotenv-extended';
-
 import { LoggerComponent } from 'src/extensions/logger';
 import {
 	JWTAuthenticationComponent,
 	RefreshTokenServiceBindings,
 	TokenServiceBindings,
 } from 'src/extensions/authentication-jwt';
-
-dotenvExt.load({
-	encoding: 'utf8',
-	silent: false,
-	path: '.env',
-	defaults: '.env.defaults',
-	schema: '.env.schema',
-	errorOnMissing: false,
-	errorOnExtra: false,
-	errorOnRegex: false,
-	includeProcessEnv: false,
-	assignToProcessEnv: true,
-	overrideProcessEnv: false,
-});
 
 export { ApplicationConfig };
 

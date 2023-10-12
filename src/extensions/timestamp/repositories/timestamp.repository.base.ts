@@ -101,32 +101,34 @@ export class TimestampRepository<
 
 		modelClass.observe('before save', (ctx, next) => { // 'persist' operation will include the id and entires instance
 			debug(`Going to save ${ctx.Model.modelName}`);
+			// debug('ctx ', inspect(ctx, false, null, true));
 			debug('Data ', inspect(ctx.instance ?? ctx.data));
 
-			console.log('currentInstance', ctx);
+			if (!ctx.isNewInstance) {
+				if (ctx.instance) {
+					debug('Replace by id of instance');
 
-			// if (!ctx.isNewInstance) {
-			// 	if (ctx.instance) {
-			// 		console.log('DEV ~ file: timestamp.repository.base.ts:108 ~ modelClass.observe ~ ctx.instance):');
-			// 		this.findById(ctx.instance.id).then((el) => {
-			// 			ctx.instance.createdAt = el.createdAt;
-			// 			ctx.instance.updatedAt = +new Date();
+					this.findById(ctx.instance.id).then((el) => {
+						ctx.instance.createdAt = el.createdAt;
+						ctx.instance.updatedAt = +new Date();
 
-			// 			next();
-			// 		}).catch((e) => {
-			// 			next(e);
-			// 		});
-			// 	} else {
-			// 		console.log('DEV ~ file: timestamp.repository.base.ts:108 ~ modelClass.observe ~ ctx.data):');
+						next();
+					}).catch((e) => {
+						next(e);
+					});
+				} else {
+					debug('Patch by id of app');
 
-			// 		delete ctx.data.createdAt;
-			// 		ctx.data.updatedAt = +new Date();
+					delete ctx.data.createdAt;
+					ctx.data.updatedAt = +new Date();
 
-			// 		next();
-			// 	}
-			// } else {
-			// }
-			next(); // next(err)
+					next();
+				}
+			} else {
+				debug('Create new instance');
+
+				next(); // next(err)
+			}
 		});
 
 		return modelClass;

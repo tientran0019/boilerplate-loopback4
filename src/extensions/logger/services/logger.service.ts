@@ -35,25 +35,25 @@ winston.addColors(colors);
 
 export class LoggerService {
 	private logger: winston.Logger = winston.createLogger({
-		exceptionHandlers: [
-			new DailyRotateFile({
-				filename: `${appRoot}/logs/exceptions-%DATE%.log`,
-				datePattern: 'YYYY-MM-DD',
-				zippedArchive: false,
-				maxSize: '20m',
-				maxFiles: '14d',
-				json: true,
-				format: winston.format.combine(
-					errorFilter(),
-					winston.format.timestamp({
-						format: 'YYYY-MM-DD HH:mm:ss',
-					}),
-					winston.format.uncolorize(),
-					winston.format.json(),
-				),
-				watchLog: true,
-			}),
-		],
+		// exceptionHandlers: [
+		// 	new DailyRotateFile({
+		// 		filename: `${appRoot}/logs/exceptions-%DATE%.log`,
+		// 		datePattern: 'YYYY-MM-DD',
+		// 		zippedArchive: false,
+		// 		maxSize: '20m',
+		// 		maxFiles: '14d',
+		// 		json: true,
+		// 		format: winston.format.combine(
+		// 			errorFilter(),
+		// 			winston.format.timestamp({
+		// 				format: 'YYYY-MM-DD HH:mm:ss',
+		// 			}),
+		// 			winston.format.uncolorize(),
+		// 			winston.format.json(),
+		// 		),
+		// 		watchLog: true,
+		// 	}),
+		// ],
 		exitOnError: false,
 		// Default format
 		format: winston.format.combine(
@@ -74,13 +74,9 @@ export class LoggerService {
 						winston.format.json(),
 						winston.format.prettyPrint(),
 						winston.format.printf((log) => {
-							const { timestamp, level, message, headers } = log;
+							const { timestamp, level, message, meta } = log;
 
-							const meta = {
-								headers,
-							};
-
-							if (headers && meta && Object.keys(meta).length > 0) {
+							if (meta && Object.keys(meta).length > 0) {
 								console.log('Metadata:', meta);
 							}
 							return `[${timestamp}] [${level}] [${message}]`;
@@ -130,23 +126,23 @@ export class LoggerService {
 	});
 
 	log = (level: string, message: string, meta?: object): Logger => {
-		return this.logger.log(level, message, meta);
+		return this.logger.log(level, message, { meta });
 	};
 	// for cli and npm levels
 	error = (message: string, meta?: object): Logger => {
-		return this.logger.error(message, meta);
+		return this.logger.error(message, { meta });
 	};
 	warn = (message: string, meta?: object): Logger => {
-		return this.logger.warn(message, meta);
+		return this.logger.warn(message, { meta });
 	};
 	info = (message: string, meta?: object): Logger => {
-		return this.logger.info(message, meta);
+		return this.logger.info(message, { meta });
 	};
 	debug = (message: string, meta?: object): Logger => {
-		return this.logger.debug(message, meta);
+		return this.logger.debug(message, { meta });
 	};
 	http = (message: string, meta?: object): Logger => {
-		return this.logger.http(message, meta);
+		return this.logger.http(message, { meta });
 	};
 
 	// TODO: Build the UI to see the logs
