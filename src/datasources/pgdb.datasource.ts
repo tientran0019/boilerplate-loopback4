@@ -3,9 +3,9 @@
 * Email tientran0019@gmail.com
 * Phone 0972970075
 *
-* Created: 2023-10-23 20:58:05
+* Created: 2023-10-23 20:57:56
 
-* Last updated on: 2023-10-23 20:58:05
+* Last updated on: 2023-10-23 20:57:56
 * Last updated by: Tien Tran
 *------------------------------------------------------- */
 
@@ -13,25 +13,23 @@ import { inject, LifeCycleObserver, lifeCycleObserver, ValueOrPromise } from '@l
 import { juggler, AnyObject } from '@loopback/repository';
 
 const config = {
-	name: 'mongo',
-	connector: 'mongodb',
+	name: 'pgdb',
+	connector: 'postgresql',
+	host: process.env.POSTGRESQL_HOST,
+	port: process.env.POSTGRESQL_PORT,
 	url: process.env.MONGO_URL,
-	host: process.env.MONGO_HOST,
-	port: process.env.MONGO_PORT,
-	user: process.env.MONGO_USER,
-	password: process.env.MONGO_PASSWORD,
-	database: process.env.MONGO_DATABASE,
-	useNewUrlParser: true,
-	useUnifiedTopology: true,
+	user: process.env.POSTGRESQL_USER,
+	password: process.env.POSTGRESQL_PASSWORD,
+	database: process.env.POSTGRESQL_DATABASE,
 };
 
 @lifeCycleObserver('datasource')
-export class MongoDataSource extends juggler.DataSource implements LifeCycleObserver {
+export class PostgreSQLDataSource extends juggler.DataSource implements LifeCycleObserver {
 	static readonly dataSourceName = config.name;
 	static readonly defaultConfig = config;
 
 	constructor(
-		@inject('datasources.config.mongo', { optional: true })
+		@inject('datasources.config.pgdb', { optional: true })
 		dsConfig: AnyObject = config,
 	) {
 		super(dsConfig);

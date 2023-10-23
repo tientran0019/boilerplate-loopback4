@@ -20,6 +20,9 @@ export class RefreshToken extends TimestampMixin(Entity) {
 		type: 'string',
 		id: true,
 		generated: false,
+		index: {
+			type: 'hashed',
+		},
 	})
 	id: string;
 

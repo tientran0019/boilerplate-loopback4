@@ -1,17 +1,12 @@
 import { PropertyDecoratorFactory } from '@loopback/metadata';
 
-export const MODEL_SLUG_KEY = 'slug';
+import { SlugifyOptions } from '../utils/slugify';
 
-export interface PropertyDefinition {
-	field: string;
-	options?: {
-		replacement?: string;
-		remove?: RegExp;
-		lower?: boolean;
-		strict?: boolean;
-		locale?: string;
-		trim?: boolean;
-	};
+export const MODEL_SLUG_KEY = 'metadata-key-model-property-slug';
+
+export type PropertyDefinition = {
+	fields: string | string[];
+	options?: SlugifyOptions;
 }
 
 /**

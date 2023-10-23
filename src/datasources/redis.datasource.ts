@@ -5,8 +5,10 @@ import { juggler, AnyObject } from '@loopback/repository';
 const config = {
 	name: 'redis',
 	connector: 'kv-redis',
+	url: process.env.REDIS_URL,
 	host: process.env.REDIS_HOST,
 	port: process.env.REDIS_PORT,
+	user: process.env.REDIS_USER,
 	password: process.env.REDIS_PASSWORD,
 	db: process.env.REDIS_DATABASE,
 };

@@ -9,12 +9,16 @@
 * Last updated by: Tien Tran
 *------------------------------------------------------- */
 
-import { belongsTo, model, property } from '@loopback/repository';
+import { Entity, belongsTo, model, property } from '@loopback/repository';
 
 import { User } from './user.model';
 import { Category } from './category.model';
 import { SlugifyEntityMixin } from 'src/extensions/slugify';
 import { TimestampEntity } from 'src/extensions/timestamp';
+import { slug } from 'src/extensions/base/decorators/slug.decorator';
+import { mixin } from 'src/extensions/base/decorators/mixin.decorator';
+import { TimestampModelMixin } from 'src/extensions/base/mixins/timestamp.model.mixin';
+import { SlugModelMixin } from 'src/extensions/base/mixins/slug.model.mixin';
 
 @model({
 	settings: {
@@ -22,7 +26,8 @@ import { TimestampEntity } from 'src/extensions/timestamp';
 		order: 'publishedDate DESC',
 	},
 })
-export class Article extends SlugifyEntityMixin(TimestampEntity) {
+@mixin(TimestampModelMixin)
+export class Article extends Entity {
 	@property({
 		type: 'string',
 		id: true,
@@ -39,6 +44,27 @@ export class Article extends SlugifyEntityMixin(TimestampEntity) {
 		index: true,
 	})
 	title: string;
+
+	@slug({
+		fields: 'title',
+		options: {
+			lower: true,
+			strict: true,
+		},
+	})
+	@property({
+		index: {
+			unique: true,
+		},
+		jsonSchema: {
+			readOnly: true,
+			pattern: '/^[a-z0-9]+([a-z0-9_-])*$/',
+			errorMessage: {
+				pattern: 'Invalid slug',
+			},
+		},
+	})
+	slug: string;
 
 	@property({
 		type: 'string',

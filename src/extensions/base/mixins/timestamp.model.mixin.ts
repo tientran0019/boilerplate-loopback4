@@ -4,30 +4,38 @@ import { Model, property } from '@loopback/repository';
 export function TimestampModelMixin<T extends MixinTarget<Model>>(superClass: T) {
 	class MixedModel extends superClass implements TimestampModel {
 		@property({
-			type: 'date',
-			default: () => new Date(),
-			name: 'created_at',
-			mysql: {
-				columnName: 'created_at',
+			type: 'number',
+			default: () => +new Date(),
+			index: true,
+			jsonSchema: {
+				readOnly: true,
+				pattern: /^\d{13}$/.source,
+				errorMessage: {
+					pattern: 'Invalid timestamp',
+				},
 			},
 		})
-		createdAt?: Date;
+		createdAt: number;
 
 		@property({
-			type: 'date',
-			default: () => new Date(),
-			name: 'updated_at',
-			mysql: {
-				columnName: 'updated_at',
+			type: 'number',
+			index: true,
+			updateOnly: true, // Update only when the model is updated
+			jsonSchema: {
+				readOnly: true,
+				pattern: /^\d{13}$/.source,
+				errorMessage: {
+					pattern: 'Invalid timestamp',
+				},
 			},
 		})
-		updatedAt?: Date;
+		updatedAt: number;
 	}
 
 	return MixedModel;
 }
 
 export interface TimestampModel {
-	createdAt?: Date;
-	updatedAt?: Date;
+	createdAt?: number;
+	updatedAt?: number;
 }

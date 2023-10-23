@@ -30,7 +30,7 @@ export function TimestampRepositoryMixin<
 		// @ts-ignore
 		async save(entity: T, options?: TimestampRepositoryOperationOptions): Promise<T> {
 			if (!options?.skipUpdatedAt) {
-				entity.updatedAt = new Date();
+				entity.updatedAt = +new Date();
 			}
 			return super.save(entity, options);
 		}
@@ -38,7 +38,7 @@ export function TimestampRepositoryMixin<
 		// @ts-ignore
 		async update(entity: T, options?: TimestampRepositoryOperationOptions): Promise<void> {
 			if (!options?.skipUpdatedAt) {
-				entity.updatedAt = new Date();
+				entity.updatedAt = +new Date();
 			}
 			return super.update(entity, options);
 		}
@@ -50,7 +50,7 @@ export function TimestampRepositoryMixin<
 			options?: TimestampRepositoryOperationOptions,
 		): Promise<Count> {
 			if (!options?.skipUpdatedAt) {
-				data.updatedAt = new Date();
+				data.updatedAt = +new Date();
 			}
 			return super.updateAll(data, where, options);
 		}
@@ -58,7 +58,7 @@ export function TimestampRepositoryMixin<
 		// @ts-ignore
 		async updateById(id: ID, data: DataObject<T>, options?: TimestampRepositoryOperationOptions): Promise<void> {
 			if (!options?.skipUpdatedAt) {
-				data.updatedAt = new Date();
+				data.updatedAt = +new Date();
 			}
 			return super.updateById(id, data, options);
 		}
@@ -66,7 +66,7 @@ export function TimestampRepositoryMixin<
 		// @ts-ignore
 		async replaceById(id: ID, data: DataObject<T>, options?: TimestampRepositoryOperationOptions): Promise<void> {
 			if (!options?.skipUpdatedAt) {
-				data.updatedAt = new Date();
+				data.updatedAt = +new Date();
 			}
 			const model = await this.findById(id, { fields: ['id', 'createdAt'] } as FilterExcludingWhere<T>, options);
 			data.createdAt = model.createdAt;
