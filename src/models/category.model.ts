@@ -11,9 +11,9 @@
 
 import { Entity, belongsTo, model, property } from '@loopback/repository';
 
-import { TimestampMixin } from 'src/mixins/timestamp.mixin';
 import { User } from './user.model';
 import { SlugifyEntityMixin } from 'src/extensions/slugify';
+import { TimestampEntityMixin } from 'src/extensions/timestamp';
 
 @model({
 	settings: {
@@ -21,7 +21,7 @@ import { SlugifyEntityMixin } from 'src/extensions/slugify';
 		order: 'createdAt DESC',
 	},
 })
-export class Category extends SlugifyEntityMixin(TimestampMixin(Entity)) {
+export class Category extends SlugifyEntityMixin(TimestampEntityMixin(Entity)) {
 	@property({
 		type: 'string',
 		id: true,

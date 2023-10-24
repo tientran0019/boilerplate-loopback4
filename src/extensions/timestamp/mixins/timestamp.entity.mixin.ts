@@ -10,23 +10,28 @@
 *------------------------------------------------------- */
 
 import { Constructor } from '@loopback/context';
-import { Entity, PropertyDefinition, property } from '@loopback/repository';
-import { AbstractConstructor, IBaseEntity } from '../types';
+import { Model, PropertyDefinition, property } from '@loopback/repository';
+import { MixinTarget } from '@loopback/core';
 
 export interface TimestampEntityMixinConfigs {
-	createdAt?: Partial<PropertyDefinition>
-	updatedAt?: Partial<PropertyDefinition>
+	index?: {
+		createdAt?: object | boolean,
+		updatedAt?: object | boolean,
+	};
+	createdAt?: Partial<PropertyDefinition>;
+	updatedAt?: Partial<PropertyDefinition>;
 }
 
-export function TimestampEntityMixin<
-	T extends Entity,
-	S extends Constructor<T> | AbstractConstructor<T>,
->(base: S, config?: TimestampEntityMixinConfigs): typeof base & Constructor<IBaseEntity> {
+export function TimestampEntityMixin<T extends MixinTarget<Constructor<Model>>>(
+	base: T,
+	config: TimestampEntityMixinConfigs = { index: { createdAt: true, updatedAt: true } },
+) {
+
 	class TimestampEntity extends base {
 		@property({
 			type: 'number',
 			default: () => +new Date(),
-			index: true,
+			index: config.index?.createdAt,
 			jsonSchema: {
 				readOnly: true,
 				pattern: /^\d{13}$/.source,
@@ -34,13 +39,13 @@ export function TimestampEntityMixin<
 					pattern: 'Invalid timestamp',
 				},
 			},
-			...config?.createdAt,
+			...(config?.createdAt ?? {}),
 		})
 		readonly createdAt: number;
 
 		@property({
 			type: 'number',
-			index: true,
+			index: config.index?.updatedAt,
 			updateOnly: true, // Update only when the model is updated
 			jsonSchema: {
 				readOnly: true,
@@ -49,7 +54,7 @@ export function TimestampEntityMixin<
 					pattern: 'Invalid timestamp',
 				},
 			},
-			...config?.updatedAt,
+			...(config?.updatedAt ?? {}),
 		})
 		readonly updatedAt: number;
 	}

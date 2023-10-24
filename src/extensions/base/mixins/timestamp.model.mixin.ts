@@ -1,7 +1,8 @@
 import { MixinTarget } from '../types';
-import { Model, property } from '@loopback/repository';
+import { Model, model, property } from '@loopback/repository';
 
 export function TimestampModelMixin<T extends MixinTarget<Model>>(superClass: T) {
+	@model()
 	class MixedModel extends superClass implements TimestampModel {
 		@property({
 			type: 'number',

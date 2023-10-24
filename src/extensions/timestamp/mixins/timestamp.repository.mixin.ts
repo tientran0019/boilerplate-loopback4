@@ -25,10 +25,10 @@ export function TimestampRepositoryMixin<
 	ID,
 	T extends MixinBaseClass<DefaultCrudRepository<E, ID, R>>,
 	R extends object = {},
->(base: T): T & Constructor<ITimestampRepositoryMixin<E>> {
+>(base: T, configs = {}) {
 	// Using extendPrototype decorator here as Typescript doesn't support multilevel inheritance.
 	// This will result in a class extending `base` class overridden with `TimestampRepository`'s methods and properties.
-	@extendPrototype(TimestampRepository)
+	@extendPrototype(configs, TimestampRepository)
 	class TimestampRepositoryExtended extends base { }
 
 	return TimestampRepositoryExtended as T & Constructor<ITimestampRepositoryMixin<E>>;

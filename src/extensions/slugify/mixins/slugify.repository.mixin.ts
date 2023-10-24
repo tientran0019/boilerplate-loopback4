@@ -15,20 +15,21 @@ import {
 	Constructor,
 	IBaseEntity,
 	ISlugifyRepositoryMixin,
-	MixinBaseClass,
+	SlugifyRepositoryOptions,
 } from '../types';
 import { SlugifyRepository } from '../repositories';
 import extendPrototype from '../decorators/extend-prototype';
+import { MixinTarget } from '@loopback/core';
 
 export function SlugifyRepositoryMixin<
 	E extends Entity & IBaseEntity,
 	ID,
-	T extends MixinBaseClass<DefaultCrudRepository<E, ID, R>>,
+	T extends MixinTarget<DefaultCrudRepository<E, ID, R>>,
 	R extends object = {},
->(base: T): T & Constructor<ISlugifyRepositoryMixin<E, ID, R>> {
+>(base: T, configs: SlugifyRepositoryOptions = {}) {
 	// Using extendPrototype decorator here as Typescript doesn't support multilevel inheritance.
 	// This will result in a class extending `base` class overridden with `SlugifyRepository`'s methods and properties.
-	@extendPrototype(SlugifyRepository)
+	@extendPrototype(configs, SlugifyRepository)
 	class SlugifyRepositoryExtended extends base { }
 
 	return SlugifyRepositoryExtended as T & Constructor<ISlugifyRepositoryMixin<E, ID, R>>;

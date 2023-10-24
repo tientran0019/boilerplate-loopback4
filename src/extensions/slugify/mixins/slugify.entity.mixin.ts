@@ -10,13 +10,13 @@
 *------------------------------------------------------- */
 
 import { Constructor } from '@loopback/context';
-import { Entity, PropertyDefinition, property } from '@loopback/repository';
-import { AbstractConstructor, IBaseEntity } from '../types';
+import { Model, PropertyDefinition, property } from '@loopback/repository';
+import { MixinTarget } from '@loopback/core';
 
-export function SlugifyEntityMixin<
-	T extends Entity,
-	S extends Constructor<T> | AbstractConstructor<T>,
->(base: S, config?: Partial<PropertyDefinition>): typeof base & Constructor<IBaseEntity> {
+export function SlugifyEntityMixin<T extends MixinTarget<Constructor<Model>>>(
+	base: T,
+	config?: Partial<PropertyDefinition>,
+) {
 	class SlugifyEntity extends base {
 		@property({
 			type: 'string',

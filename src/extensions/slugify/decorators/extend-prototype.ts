@@ -30,16 +30,24 @@
  * @param classes One or more classes whose prototype will be extended onto the target class.
  */
 export default function extendPrototype(
+	configs = {},
 	...classes: unknown & { prototype: unknown }[]
 ) {
+	console.log('DEV ~ file: extend-slugify.ts:36 ~ configs:', configs);
 	return function (target: unknown & { prototype: unknown }) {
 		classes.forEach(mixin => {
+			Object.defineProperty(
+				target.prototype,
+				'configs',
+				{
+					value: configs,
+				},
+			);
 			Object.getOwnPropertyNames(mixin.prototype).forEach(name => {
 				Object.defineProperty(
 					target.prototype,
 					name,
-					Object.getOwnPropertyDescriptor(mixin.prototype, name) ??
-					Object.create(null),
+					Object.getOwnPropertyDescriptor(mixin.prototype, name) ?? Object.create(null),
 				);
 			});
 		});
