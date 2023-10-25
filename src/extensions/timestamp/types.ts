@@ -29,8 +29,8 @@ export interface AbstractConstructor<T> {
 export type MixinBaseClass<T> = Constructor<T> & AbstractConstructor<T>;
 
 export interface IBaseEntity {
-	createdAt: number;
-	updatedAt: number;
+	createdAt?: number;
+	updatedAt?: number;
 }
 
 export interface ITimestampRepositoryMixin<E> {

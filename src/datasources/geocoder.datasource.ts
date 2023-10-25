@@ -15,11 +15,7 @@ import { juggler } from '@loopback/repository';
 
 const config = {
 	name: 'geocoder',
-	// A workaround for the current design flaw where inside our monorepo,
-	//   packages/service-proxy/node_modules/loopback-datasource-juggler
-	// cannot see/load the connector from
-	//   examples/todo/node_modules/loopback-connector-rest
-	connector: require('loopback-connector-rest'),
+	connector: 'rest',
 	options: {
 		headers: {
 			accept: 'application/json',
@@ -51,10 +47,8 @@ const config = {
 // gracefully. The `stop()` method is inherited from `juggler.DataSource`.
 // Learn more at https://loopback.io/doc/en/lb4/Life-cycle.html
 @lifeCycleObserver('datasource')
-export class GeocoderDataSource
-	extends juggler.DataSource
-	implements LifeCycleObserver {
-	static dataSourceName = 'geocoder';
+export class GeocoderDataSource extends juggler.DataSource implements LifeCycleObserver {
+	static dataSourceName = config.name;
 	static readonly defaultConfig = config;
 
 	constructor(

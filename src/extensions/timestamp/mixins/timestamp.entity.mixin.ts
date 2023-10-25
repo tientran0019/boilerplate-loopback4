@@ -24,14 +24,14 @@ export interface TimestampEntityMixinConfigs {
 
 export function TimestampEntityMixin<T extends MixinTarget<Constructor<Model>>>(
 	base: T,
-	config: TimestampEntityMixinConfigs = { index: { createdAt: true, updatedAt: true } },
+	configs: TimestampEntityMixinConfigs = { index: { createdAt: true, updatedAt: true } },
 ) {
 
 	class TimestampEntity extends base {
 		@property({
 			type: 'number',
 			default: () => +new Date(),
-			index: config.index?.createdAt,
+			index: configs.index?.createdAt,
 			jsonSchema: {
 				readOnly: true,
 				pattern: /^\d{13}$/.source,
@@ -39,13 +39,13 @@ export function TimestampEntityMixin<T extends MixinTarget<Constructor<Model>>>(
 					pattern: 'Invalid timestamp',
 				},
 			},
-			...(config?.createdAt ?? {}),
+			...(configs?.createdAt ?? {}),
 		})
-		readonly createdAt: number;
+		readonly createdAt?: number;
 
 		@property({
 			type: 'number',
-			index: config.index?.updatedAt,
+			index: configs.index?.updatedAt,
 			updateOnly: true, // Update only when the model is updated
 			jsonSchema: {
 				readOnly: true,
@@ -54,9 +54,9 @@ export function TimestampEntityMixin<T extends MixinTarget<Constructor<Model>>>(
 					pattern: 'Invalid timestamp',
 				},
 			},
-			...(config?.updatedAt ?? {}),
+			...(configs?.updatedAt ?? {}),
 		})
-		readonly updatedAt: number;
+		readonly updatedAt?: number;
 	}
 
 	return TimestampEntity;

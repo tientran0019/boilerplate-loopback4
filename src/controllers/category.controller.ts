@@ -19,6 +19,7 @@ import {
 } from '@loopback/rest';
 import { Category } from '../models';
 import { CategoryRepository } from '../repositories';
+import { authenticate } from '@loopback/authentication';
 
 export class CategoryController {
 	constructor(
@@ -26,6 +27,7 @@ export class CategoryController {
 		public categoryRepository: CategoryRepository,
 	) { }
 
+	@authenticate('jwt')
 	@post('/categories')
 	@response(200, {
 		description: 'Category model instance',

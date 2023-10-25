@@ -30,6 +30,8 @@ export class TimestampRepository<
 	ID,
 	R extends object = {},
 > extends DefaultCrudRepository<E, ID, R> {
+	configsTimestamp = {};
+
 	constructor(
 		entityClass: typeof Entity & {
 			prototype: E;

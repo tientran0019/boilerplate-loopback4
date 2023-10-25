@@ -114,6 +114,8 @@ export abstract class SlugifyRepository<
 	}
 
 	async create(entity: DataObject<E & { slug: string, [key: string]: string | undefined }>, options?: Options): Promise<E> {
+		console.log('111------------------', this.configs);
+
 		try {
 			entity.slug = await this.generateUniqueSlug(entity);
 

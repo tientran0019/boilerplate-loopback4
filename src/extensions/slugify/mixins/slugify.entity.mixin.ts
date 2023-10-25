@@ -15,7 +15,7 @@ import { MixinTarget } from '@loopback/core';
 
 export function SlugifyEntityMixin<T extends MixinTarget<Constructor<Model>>>(
 	base: T,
-	config?: Partial<PropertyDefinition>,
+	configs?: Partial<PropertyDefinition>,
 ) {
 	class SlugifyEntity extends base {
 		@property({
@@ -30,7 +30,7 @@ export function SlugifyEntityMixin<T extends MixinTarget<Constructor<Model>>>(
 					pattern: 'Invalid slug',
 				},
 			},
-			...config,
+			...configs,
 		})
 		slug: string;
 	}

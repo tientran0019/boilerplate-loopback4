@@ -15,8 +15,17 @@ import { DefaultCrudRepository, repository, BelongsToAccessor } from '@loopback/
 import { MongoDataSource } from 'src/datasources';
 import { Category, CategoryRelations, User } from 'src/models';
 import { UserRepository } from './user.repository';
-import { SlugifyRepositoryMixin, SlugifyRepositoryOptions } from 'src/extensions/slugify';
+import { SlugifyRepositoryMixin } from 'src/extensions/slugify';
 import { TimestampRepositoryMixin } from 'src/extensions/timestamp';
+import { SecurityBindings, UserProfile } from '@loopback/security';
+
+const TimestampMixin = TimestampRepositoryMixin<
+	Category,
+	typeof Category.prototype.id,
+	Constructor<
+		DefaultCrudRepository<Category, typeof Category.prototype.id, CategoryRelations>
+	>
+>(DefaultCrudRepository, { userTracking: true });
 
 export class CategoryRepository extends SlugifyRepositoryMixin<
 	Category,
@@ -25,17 +34,18 @@ export class CategoryRepository extends SlugifyRepositoryMixin<
 		DefaultCrudRepository<Category, typeof Category.prototype.id, CategoryRelations>
 	>
 >(
-	TimestampRepositoryMixin(DefaultCrudRepository, { test: 1 }),
+	TimestampMixin,
 	{
 		fields: ['name'],
 	}
 ) {
-
 	public readonly creator: BelongsToAccessor<User, typeof Category.prototype.id>;
 
 	constructor(
 		@inject('datasources.mongo') dataSource: MongoDataSource,
 		@repository.getter('UserRepository') protected userRepositoryGetter: Getter<UserRepository>,
+		@inject(SecurityBindings.USER, { optional: true })
+		public currentUser: UserProfile,
 	) {
 		super(Category, dataSource);
 		this.creator = this.createBelongsToAccessorFor('creator', userRepositoryGetter,);

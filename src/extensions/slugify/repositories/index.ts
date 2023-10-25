@@ -10,4 +10,4 @@
 *------------------------------------------------------- */
 
 export * from './slugify.repository.base';
-export * from './default-transaction-slugify.repository.base';
+export * from './transaction-slugify.repository.base';

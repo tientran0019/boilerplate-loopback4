@@ -10,9 +10,11 @@
 *------------------------------------------------------- */
 
 import {
+	Count,
 	DataObject,
 	Filter,
 	Options,
+	Where,
 } from '@loopback/repository';
 
 export interface Constructor<T> {
@@ -39,14 +41,14 @@ export interface SlugifyRepositoryOptions {
 	fields?: string[] | string,
 }
 
-export interface ISlugifyRepositoryMixin<T extends object, ID, R> {
-	findUniqueSlug(entity: DataObject<T>, options?: Options): Promise<string>;
-	create(entity: DataObject<T>, options?: Options): Promise<T>;
-    // createAll(entities: DataObject<T>[], options?: Options): Promise<T[]>; TODO: Make it in the future
-    save(entity: T, options?: Options): Promise<T>;
-    update(entity: T, options?: Options): Promise<void>;
-	// updateAll(data: DataObject<T>, where?: Where<T>, options?: Options): Promise<Count>;
-    updateById(id: ID, data: DataObject<T>, options?: Options): Promise<void>;
-    replaceById(id: ID, data: DataObject<T>, options?: Options): Promise<void>;
-    findBySlug(slug: string, filter?: Filter<T>, options?: Options): Promise<T & R>;
+export interface ISlugifyRepositoryMixin<E extends object, ID, R> {
+    findBySlug(slug: string, filter?: Filter<E>, options?: Options): Promise<(E & R) | null>;
+	generateUniqueSlug(entity: DataObject<E>, options?: Options): Promise<string>;
+	create(entity: DataObject<E>, options?: Options): Promise<E>;
+    createAll(entities: DataObject<E>[], options?: Options): Promise<E[]>;
+    save(entity: E, options?: Options): Promise<E>;
+    update(entity: E, options?: Options): Promise<void>;
+	updateAll(data: DataObject<E>, where?: Where<E>, options?: Options): Promise<Count>;
+    updateById(id: ID, data: DataObject<E>, options?: Options): Promise<void>;
+    replaceById(id: ID, data: DataObject<E>, options?: Options): Promise<void>;
 }

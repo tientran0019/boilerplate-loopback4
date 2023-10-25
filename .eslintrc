@@ -4,6 +4,54 @@
 	],
 	"rules": {
 		"@typescript-eslint/no-unsafe-declaration-merging": "off",
+		"@typescript-eslint/naming-convention": [
+			"error",
+			{
+				"selector": "class",
+				"format": [
+					"PascalCase"
+				]
+			},
+			{
+				"selector": "typeParameter",
+				"format": [
+					"PascalCase"
+				]
+			},
+			{
+				"selector": "enum",
+				"format": [
+					"PascalCase"
+				]
+			},
+			{
+				"selector": "enumMember",
+				"format": [
+					"PascalCase"
+				]
+			},
+			{
+				"selector": "typeAlias",
+				"format": [
+					"PascalCase"
+				]
+			},
+			{
+				"selector": "interface",
+				"format": [
+					"PascalCase"
+				]
+				// "prefix": [
+				// 	"I"
+				// ]
+			}
+		],
+		"@typescript-eslint/no-misused-promises": [
+			"error",
+			{
+				"checksVoidReturn": false
+			}
+		],
 		"@typescript-eslint/ban-ts-comment": "off",
 		"@typescript-eslint/no-explicit-any": "off",
 		"quotes": [
