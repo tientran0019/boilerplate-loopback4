@@ -14,19 +14,42 @@ import { Count, DataObject, DefaultCrudRepository, Entity, FilterExcludingWhere,
 import {
 	IBaseEntity,
 } from '../types';
-import { MixinTarget, inject } from '@loopback/core';
+import { MixinTarget } from '@loopback/core';
 
 import debugFactory from 'debug';
-import { SecurityBindings, UserProfile } from '@loopback/security';
+import { UserProfile } from '@loopback/security';
+import { merge } from 'lodash';
+import { HttpErrors } from '@loopback/rest';
 
 const debug = debugFactory('extensions:timestamp');
+
+export interface TimestampRepositoryMixinOptions {
+	userTracking?: boolean,
+	/**
+	 * Throw InvalidCredentials error if no getCurrentUser function provided or no user signed in.
+	 */
+	throwIfNoUser?: boolean;
+	createdField?: string,
+	updatedField?: string,
+}
 
 export function TimestampRepositoryMixin<
 	E extends Entity & IBaseEntity,
 	ID,
 	T extends MixinTarget<DefaultCrudRepository<E, ID, R>>,
 	R extends object = {},
->(base: T, configs = { userTracking: true }) {
+>(
+	base: T,
+	configs?: TimestampRepositoryMixinOptions,
+) {
+	const { createdField, updatedField, throwIfNoUser, userTracking } = merge({
+		userTracking: true,
+		throwIfNoUser: true,
+		createdField: 'createdById',
+		updatedField: 'lastUpdatedById',
+	}, configs ?? {});
+	debug('DEV ~ file: timestamp.repository.mixin.ts:46 ~ configs:', configs);
+
 	abstract class TimestampRepository extends base {
 		currentUser?: UserProfile;
 
@@ -39,17 +62,51 @@ export function TimestampRepositoryMixin<
 
 		// @ts-ignore
 		async create(entity: DataObject<E>, options?: Options): Promise<E> {
-			console.log('000------------------', configs);
-			console.log('000------------------', this.currentUser);
+			if (userTracking) {
+				const userId = this.currentUser?.id ?? options?.currentUserId;
 
-			// @ts-ignore
-			entity.creatorId = this.currentUser?.id;
+				if (!userId && throwIfNoUser) {
+					throw new HttpErrors.Forbidden('Invalid Credentials');
+				}
+				// @ts-ignore
+				entity[createdField] = userId;
+			}
 
 			return super.create(entity, options) as any;
 		}
 
 		// @ts-ignore
+		async createAll(entities: DataObject<E>[], options?: Options): Promise<E[]> {
+			if (userTracking) {
+				const userId = this.currentUser?.id ?? options?.currentUserId;
+
+				if (!userId && throwIfNoUser) {
+					throw new HttpErrors.Forbidden('Invalid Credentials');
+				}
+
+				entities.forEach(entity => {
+					// @ts-ignore
+					entity[createdField] = userId;
+				});
+			}
+
+			return super.createAll(entities, options);
+		}
+
+		// @ts-ignore
 		async save(entity: E, options?: Options): Promise<E> {
+			if (userTracking) {
+				const userId = this.currentUser?.id ?? options?.currentUserId;
+
+				if (!userId && throwIfNoUser) {
+					throw new HttpErrors.Forbidden('Invalid Credentials');
+				}
+				// @ts-ignore
+				entity[updatedField] = userId;
+				// @ts-ignore
+				delete entity[createdField];
+			}
+
 			if (!options?.skipUpdatedAt) {
 				entity.updatedAt = +new Date();
 			}
@@ -60,6 +117,17 @@ export function TimestampRepositoryMixin<
 
 		// @ts-ignore
 		async update(entity: E, options?: Options): Promise<void> {
+			if (userTracking) {
+				const userId = this.currentUser?.id ?? options?.currentUserId;
+
+				if (!userId && throwIfNoUser) {
+					throw new HttpErrors.Forbidden('Invalid Credentials');
+				}
+				// @ts-ignore
+				entity[updatedField] = userId;
+				// @ts-ignore
+				delete entity[createdField];
+			}
 			if (!options?.skipUpdatedAt) {
 				entity.updatedAt = +new Date();
 			}
@@ -73,6 +141,17 @@ export function TimestampRepositoryMixin<
 			where?: Where<E>,
 			options?: Options,
 		): Promise<Count> {
+			if (userTracking) {
+				const userId = this.currentUser?.id ?? options?.currentUserId;
+
+				if (!userId && throwIfNoUser) {
+					throw new HttpErrors.Forbidden('Invalid Credentials');
+				}
+				// @ts-ignore
+				data[updatedField] = userId;
+				// @ts-ignore
+				delete data[createdField];
+			}
 			if (!options?.skipUpdatedAt) {
 				data.updatedAt = +new Date();
 			}
@@ -82,6 +161,17 @@ export function TimestampRepositoryMixin<
 
 		// @ts-ignore
 		async updateById(id: ID, data: DataObject<E>, options?: Options): Promise<void> {
+			if (userTracking) {
+				const userId = this.currentUser?.id ?? options?.currentUserId;
+
+				if (!userId && throwIfNoUser) {
+					throw new HttpErrors.Forbidden('Invalid Credentials');
+				}
+				// @ts-ignore
+				data[updatedField] = userId;
+				// @ts-ignore
+				delete data[createdField];
+			}
 			if (!options?.skipUpdatedAt) {
 				data.updatedAt = +new Date();
 			}
@@ -91,10 +181,22 @@ export function TimestampRepositoryMixin<
 
 		// @ts-ignore
 		async replaceById(id: ID, data: DataObject<E>, options?: Options): Promise<void> {
+			const model = await this.findById(id, { fields: ['id', 'createdAt', createdField] } as FilterExcludingWhere<E>, options);
+
+			if (userTracking) {
+				const userId = this.currentUser?.id ?? options?.currentUserId;
+
+				if (!userId && throwIfNoUser) {
+					throw new HttpErrors.Forbidden('Invalid Credentials');
+				}
+				// @ts-ignore
+				data[updatedField] = userId;
+				// @ts-ignore
+				data[createdField] = model[createdField];
+			}
 			if (!options?.skipUpdatedAt) {
 				data.updatedAt = +new Date();
 			}
-			const model = await this.findById(id, { fields: ['id', 'createdAt'] } as FilterExcludingWhere<E>, options);
 			data.createdAt = model.createdAt;
 			return super.replaceById(id, data, options);
 		}

@@ -59,7 +59,7 @@ export class Category extends SlugifyEntityMixin(TimestampEntityMixin(Entity)) {
 		() => User,
 		{
 			keyTo: 'userId',
-			name: 'creator',
+			name: 'createdBy',
 		},
 		{
 			type: 'string',
@@ -69,7 +69,23 @@ export class Category extends SlugifyEntityMixin(TimestampEntityMixin(Entity)) {
 			},
 		},
 	)
-	creatorId: string;
+	createdById: string;
+
+	@belongsTo(
+		() => User,
+		{
+			keyTo: 'userId',
+			name: 'lastUpdatedBy',
+		},
+		{
+			type: 'string',
+			mongodb: { dataType: 'ObjectID' },
+			jsonSchema: {
+				readOnly: true,
+			},
+		},
+	)
+	lastUpdatedById: string;
 
 	constructor(data?: Partial<Category>) {
 		super(data);

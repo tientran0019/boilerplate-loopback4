@@ -78,6 +78,7 @@ export class CategoryController {
 		return this.categoryRepository.find(filter);
 	}
 
+	@authenticate('jwt')
 	@patch('/categories')
 	@response(200, {
 		description: 'Category PATCH success count',
@@ -129,6 +130,7 @@ export class CategoryController {
 		return this.categoryRepository.findBySlug(slug, filter);
 	}
 
+	@authenticate('jwt')
 	@patch('/categories/{id}')
 	@response(204, {
 		description: 'Category PATCH success',
@@ -147,6 +149,7 @@ export class CategoryController {
 		await this.categoryRepository.updateById(id, category);
 	}
 
+	@authenticate('jwt')
 	@put('/categories/{id}')
 	@response(204, {
 		description: 'Category PUT success',
