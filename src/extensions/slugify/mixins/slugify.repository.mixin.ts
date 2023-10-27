@@ -18,13 +18,15 @@ import {
 } from '../types';
 import { MixinTarget } from '@loopback/core';
 import { HttpErrors } from '@loopback/rest';
-import { cloneDeep, filter as filterLodash, forEach, isString, join, map } from 'lodash';
+import { cloneDeep, filter as filterLodash, forEach, join, map } from 'lodash';
 import async from 'async';
 
 import slugify from '../utils/slugify';
 import { SlugifyFilterBuilder } from '../utils/filter-builder';
 
 import debugFactory from 'debug';
+import mergeDeep from 'tily/object/mergeDeep';
+import toArray from 'tily/array/toArray';
 
 const debug = debugFactory('extensions:slugify');
 
@@ -34,6 +36,14 @@ export function SlugifyRepositoryMixin<
 	T extends MixinTarget<DefaultCrudRepository<E, ID, R>>,
 	R extends object = {},
 >(base: T, configs: SlugifyRepositoryOptions = {}) {
+	configs = mergeDeep({
+		fields: ['title'],
+		options: {
+			lower: true,
+			strict: true,
+		},
+	}, configs ?? {});
+
 	abstract class SlugifyRepository extends base implements ISlugifyRepositoryMixin<E, ID, R> {
 		constructor(...args: any[]) {
 			debug('DEV ~ file: SlugifyRepository.repository.mixin.ts:33 ~ base:', Object.getOwnPropertyNames(base.prototype));
@@ -42,10 +52,7 @@ export function SlugifyRepositoryMixin<
 
 		// @ts-ignore
 		async generateUniqueSlug(entity: DataObject<E>): Promise<string> {
-			let fields: string[] | string = configs?.fields ?? ['title'];
-			if (isString(fields)) {
-				fields = [fields];
-			}
+			const fields: string[] = toArray(configs?.fields ?? []);
 
 			const input = join(
 				// @ts-ignore
@@ -57,7 +64,7 @@ export function SlugifyRepositoryMixin<
 				throw new HttpErrors.FailedDependency('Slug configs is invalid');
 			}
 
-			let slug = slugify(input);
+			let slug = slugify(input, configs.options);
 
 
 			const regex = slug === '0' ? new RegExp('^([0-9]+)$') : new RegExp(`^${slug}(-[0-9]+){0,2}$`);
@@ -110,10 +117,6 @@ export function SlugifyRepositoryMixin<
 
 		// @ts-ignore
 		async create(entity: DataObject<E>, options?: Options): Promise<E> {
-			console.log('111------------------', configs);
-			// @ts-ignore
-			console.log('111------------------', this.currentUser);
-
 			try {
 				entity.slug = await this.generateUniqueSlug(entity);
 

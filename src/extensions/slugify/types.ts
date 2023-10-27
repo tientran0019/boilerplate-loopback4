@@ -17,6 +17,8 @@ import {
 	Where,
 } from '@loopback/repository';
 
+import { SlugifyOptions } from './utils/slugify';
+
 export interface Constructor<T> {
 	prototype: T;
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -39,6 +41,7 @@ export interface IBaseEntity {
 
 export interface SlugifyRepositoryOptions {
 	fields?: string[] | string,
+	options?: SlugifyOptions,
 }
 
 export interface ISlugifyRepositoryMixin<E extends object, ID, R> {

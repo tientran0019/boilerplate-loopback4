@@ -15,11 +15,11 @@ import {
 	IBaseEntity,
 } from '../types';
 import { MixinTarget } from '@loopback/core';
+import { HttpErrors } from '@loopback/rest';
 
 import debugFactory from 'debug';
 import { UserProfile } from '@loopback/security';
-import { merge } from 'lodash';
-import { HttpErrors } from '@loopback/rest';
+import mergeDeep from 'tily/object/mergeDeep';
 
 const debug = debugFactory('extensions:timestamp');
 
@@ -42,12 +42,13 @@ export function TimestampRepositoryMixin<
 	base: T,
 	configs?: TimestampRepositoryMixinOptions,
 ) {
-	const { createdField, updatedField, throwIfNoUser, userTracking } = merge({
+	const { createdField, updatedField, throwIfNoUser, userTracking } = mergeDeep({
 		userTracking: true,
 		throwIfNoUser: true,
 		createdField: 'createdById',
 		updatedField: 'lastUpdatedById',
 	}, configs ?? {});
+
 	debug('DEV ~ file: timestamp.repository.mixin.ts:46 ~ configs:', configs);
 
 	abstract class TimestampRepository extends base {

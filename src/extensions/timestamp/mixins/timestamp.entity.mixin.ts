@@ -12,6 +12,7 @@
 import { Constructor } from '@loopback/context';
 import { Model, PropertyDefinition, property } from '@loopback/repository';
 import { MixinTarget } from '@loopback/core';
+import mergeDeep from 'tily/object/mergeDeep';
 
 export interface TimestampEntityMixinConfigs {
 	index?: {
@@ -24,14 +25,19 @@ export interface TimestampEntityMixinConfigs {
 
 export function TimestampEntityMixin<T extends MixinTarget<Constructor<Model>>>(
 	base: T,
-	configs: TimestampEntityMixinConfigs = { index: { createdAt: true, updatedAt: true } },
+	configs?: TimestampEntityMixinConfigs,
 ) {
+
+	configs = mergeDeep(
+		{ index: { createdAt: true, updatedAt: true } },
+		configs ?? {},
+	);
 
 	class TimestampEntity extends base {
 		@property({
 			type: 'number',
 			default: () => +new Date(),
-			index: configs.index?.createdAt,
+			index: configs?.index?.createdAt,
 			jsonSchema: {
 				readOnly: true,
 				pattern: /^\d{13}$/.source,
@@ -45,7 +51,7 @@ export function TimestampEntityMixin<T extends MixinTarget<Constructor<Model>>>(
 
 		@property({
 			type: 'number',
-			index: configs.index?.updatedAt,
+			index: configs?.index?.updatedAt,
 			updateOnly: true, // Update only when the model is updated
 			jsonSchema: {
 				readOnly: true,
