@@ -74,6 +74,7 @@ export class RefreshTokenController {
 	async refresh(
 		@requestBody(RefreshGrantRequestBody) refreshGrant: RefreshGrant,
 	): Promise<TokenObject> {
+		// TODO Create new Refresh token when user refresh. And revoke the old RT, if anyone use the old RT, block all the token
 		return this.refreshService.refreshToken(refreshGrant.refreshToken);
 	}
 }

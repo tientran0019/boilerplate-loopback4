@@ -29,6 +29,7 @@ import {
 } from '@loopback/rest';
 import { Article } from '../models';
 import { ArticleRepository } from '../repositories';
+import { authenticate } from '@loopback/authentication';
 
 /* The ArticleController class is responsible for handling CRUD operations for the Article model. */
 export class ArticleController {
@@ -37,6 +38,7 @@ export class ArticleController {
 		public articleRepository: ArticleRepository,
 	) { }
 
+	@authenticate('jwt')
 	@post('/articles')
 	@response(200, {
 		description: 'Article model instance',
@@ -87,6 +89,7 @@ export class ArticleController {
 		return this.articleRepository.find(filter);
 	}
 
+	@authenticate('jwt')
 	@patch('/articles')
 	@response(200, {
 		description: 'Article PATCH success count',
@@ -138,6 +141,7 @@ export class ArticleController {
 		return this.articleRepository.findBySlug(slug, filter);
 	}
 
+	@authenticate('jwt')
 	@patch('/articles/{id}')
 	@response(204, {
 		description: 'Article PATCH success',
@@ -156,6 +160,7 @@ export class ArticleController {
 		await this.articleRepository.updateById(id, article);
 	}
 
+	@authenticate('jwt')
 	@put('/articles/{id}')
 	@response(204, {
 		description: 'Article PUT success',
@@ -167,6 +172,7 @@ export class ArticleController {
 		await this.articleRepository.replaceById(id, article, { admin: true });
 	}
 
+	@authenticate('jwt')
 	@del('/articles/{id}')
 	@response(204, {
 		description: 'Article DELETE success',

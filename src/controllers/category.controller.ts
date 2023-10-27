@@ -161,6 +161,7 @@ export class CategoryController {
 		await this.categoryRepository.replaceById(id, category);
 	}
 
+	@authenticate('jwt')
 	@del('/categories/{id}')
 	@response(204, {
 		description: 'Category DELETE success',

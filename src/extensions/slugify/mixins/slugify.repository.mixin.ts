@@ -9,7 +9,7 @@
 * Last updated by: Tien Tran
 *------------------------------------------------------- */
 
-import { Condition, Count, DataObject, DefaultCrudRepository, Entity, Filter, Options, Where } from '@loopback/repository';
+import { AnyObject, Condition, Count, DataObject, DefaultCrudRepository, Entity, Filter, Options, Where } from '@loopback/repository';
 
 import {
 	IBaseEntity,
@@ -18,7 +18,7 @@ import {
 } from '../types';
 import { MixinTarget } from '@loopback/core';
 import { HttpErrors } from '@loopback/rest';
-import { cloneDeep, filter as filterLodash, forEach, join, map } from 'lodash';
+import { cloneDeep, forEach } from 'lodash';
 import async from 'async';
 
 import slugify from '../utils/slugify';
@@ -37,41 +37,47 @@ export function SlugifyRepositoryMixin<
 	R extends object = {},
 >(base: T, configs: SlugifyRepositoryOptions = {}) {
 	configs = mergeDeep({
-		fields: ['title'],
+		fields: ['name'],
 		options: {
 			lower: true,
 			strict: true,
 		},
 	}, configs ?? {});
 
+	const generateSlug = (data: AnyObject): string => {
+		const fields: string[] = toArray(configs?.fields ?? []);
+
+		const input = fields.map((field) => {
+			return data[field];
+		}).filter(el => {
+			return !!el;
+		});
+
+		if (input.length === 0) {
+			// throw new HttpErrors.FailedDependency('Slug configs is invalid');
+			return '';
+		}
+
+		return slugify(input.join('_'), configs.options);
+	};
+
 	abstract class SlugifyRepository extends base implements ISlugifyRepositoryMixin<E, ID, R> {
 		constructor(...args: any[]) {
-			debug('DEV ~ file: SlugifyRepository.repository.mixin.ts:33 ~ base:', Object.getOwnPropertyNames(base.prototype));
 			super(...args);
 		}
 
 		// @ts-ignore
-		async generateUniqueSlug(entity: DataObject<E>): Promise<string> {
-			const fields: string[] = toArray(configs?.fields ?? []);
-
-			const input = join(
-				// @ts-ignore
-				filterLodash(map(fields, (field: string) => entity[field])),
-				'_',
-			).toLowerCase();
-
-			if (!input) {
+		async generateUniqueSlug(slug: string): Promise<string> {
+			if (!slug) {
 				throw new HttpErrors.FailedDependency('Slug configs is invalid');
 			}
-
-			let slug = slugify(input, configs.options);
-
 
 			const regex = slug === '0' ? new RegExp('^([0-9]+)$') : new RegExp(`^${slug}(-[0-9]+){0,2}$`);
 
 			const where = { slug: { like: regex } } as any;
 
 			const similarInstances = await super.find({ where });
+
 			if (similarInstances.length > 0) {
 				let maxCount = 0;
 				forEach(similarInstances, (similarInstance: any) => {
@@ -118,7 +124,9 @@ export function SlugifyRepositoryMixin<
 		// @ts-ignore
 		async create(entity: DataObject<E>, options?: Options): Promise<E> {
 			try {
-				entity.slug = await this.generateUniqueSlug(entity);
+				const slug: string = generateSlug(entity);
+
+				entity.slug = await this.generateUniqueSlug(slug as string);
 
 				return super.create(entity, options) as any;
 			} catch (error) {
@@ -134,7 +142,9 @@ export function SlugifyRepositoryMixin<
 		// @ts-ignore
 		async createAll(entities: DataObject<E>[], options?: Options): Promise<E[]> {
 			await async.eachLimit(entities, 10, async (entity: DataObject<E>) => {
-				entity.slug = await this.generateUniqueSlug(entity);
+				const slug: string = generateSlug(entity);
+
+				entity.slug = await this.generateUniqueSlug(slug);
 			});
 
 			return super.createAll(entities, options);
@@ -142,40 +152,58 @@ export function SlugifyRepositoryMixin<
 
 		// @ts-ignore
 		async save(entity: E, options?: Options): Promise<E> {
-			entity.slug = await this.generateUniqueSlug(entity);
+			const slug: string = generateSlug(entity);
+
+			if (slug !== entity.slug) {
+				entity.slug = await this.generateUniqueSlug(slug);
+			} else {
+				entity.slug = slug;
+			}
 
 			return super.save(entity, options);
 		}
 
 		// @ts-ignore
 		async update(entity: E, options?: Options): Promise<void> {
-			entity.slug = await this.generateUniqueSlug(entity);
+			const slug: string = generateSlug(entity);
+
+			if (slug !== entity.slug) {
+				entity.slug = await this.generateUniqueSlug(slug);
+			} else {
+				entity.slug = slug;
+			}
 
 			return super.update(entity, options);
 		}
 
 		// @ts-ignore
-		async updateAll(
-			data: DataObject<E>,
-			where?: Where<E>,
-			options?: Options,
-		): Promise<Count> {
-			data.slug = await this.generateUniqueSlug(data);
+		// async updateAll(
+		// 	data: DataObject<E>,
+		// 	where?: Where<E>,
+		// 	options?: Options,
+		// ): Promise<Count> {
+		// 	// @ts-ignore
+		// 	// data.slug = await this.generateUniqueSlug(data, where?.id);
 
-			return super.updateAll(data, where, options);
-		}
+		// 	return super.updateAll(data, where, options);
+		// }
 
 		// @ts-ignore
 		async updateById(id: ID, data: DataObject<E>, options?: Options): Promise<void> {
 			const item = await this.findById(id);
-
 			if (!item) {
 				throw new HttpErrors.NotFound(
 					`Not found with id: ${id}`,
 				);
 			}
 
-			data.slug = await this.generateUniqueSlug({ ...item, ...data });
+			const slug: string = generateSlug({ ...item, ...data });
+
+			if (slug !== item.slug) {
+				data.slug = await this.generateUniqueSlug(slug);
+			} else {
+				data.slug = item.slug;
+			}
 
 			return super.updateById(id, data, options);
 		}
@@ -190,11 +218,18 @@ export function SlugifyRepositoryMixin<
 				);
 			}
 
-			data.slug = await this.generateUniqueSlug({ ...item, ...data });
+			const slug: string = generateSlug({ ...item, ...data });
+
+			if (slug !== item.slug) {
+				data.slug = await this.generateUniqueSlug(slug);
+			} else {
+				data.slug = item.slug;
+			}
 
 			return super.replaceById(id, data, options);
 		}
 	}
 
+	debug('DEV ~ file: SlugifyRepository.repository.mixin.ts:33 ~ base:', Object.getOwnPropertyNames(SlugifyRepository.prototype));
 	return SlugifyRepository;
 }

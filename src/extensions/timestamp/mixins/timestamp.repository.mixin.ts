@@ -57,7 +57,6 @@ export function TimestampRepositoryMixin<
 		constructor(
 			...args: any[]
 		) {
-			debug('DEV ~ file: timestamp.repository.mixin.ts:33 ~ base:', Object.getOwnPropertyNames(base.prototype));
 			super(...args);
 		}
 
@@ -71,6 +70,8 @@ export function TimestampRepositoryMixin<
 				}
 				// @ts-ignore
 				entity[createdField] = userId;
+				// @ts-ignore
+				delete entity[updatedField];
 			}
 
 			return super.create(entity, options) as any;
@@ -88,6 +89,8 @@ export function TimestampRepositoryMixin<
 				entities.forEach(entity => {
 					// @ts-ignore
 					entity[createdField] = userId;
+					// @ts-ignore
+					delete entity[updatedField];
 				});
 			}
 
@@ -96,6 +99,7 @@ export function TimestampRepositoryMixin<
 
 		// @ts-ignore
 		async save(entity: E, options?: Options): Promise<E> {
+
 			if (userTracking) {
 				const userId = this.currentUser?.id ?? options?.currentUserId;
 
@@ -302,6 +306,8 @@ export function TimestampRepositoryMixin<
 		// 	return modelClass;
 		// }
 	}
+
+	debug('DEV ~ file: timestamp.repository.mixin.ts:33 ~ base:', Object.getOwnPropertyNames(TimestampRepository.prototype));
 
 	return TimestampRepository;
 }

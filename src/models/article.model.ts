@@ -14,11 +14,7 @@ import { Entity, belongsTo, model, property } from '@loopback/repository';
 import { User } from './user.model';
 import { Category } from './category.model';
 import { SlugifyEntityMixin } from 'src/extensions/slugify';
-import { TimestampEntity } from 'src/extensions/timestamp';
-import { slug } from 'src/extensions/base/decorators/slug.decorator';
-import { mixin } from 'src/extensions/base/decorators/mixin.decorator';
-import { TimestampModelMixin } from 'src/extensions/base/mixins/timestamp.model.mixin';
-import { SlugModelMixin } from 'src/extensions/base/mixins/slug.model.mixin';
+import { TimestampEntityMixin } from 'src/extensions/timestamp';
 
 @model({
 	settings: {
@@ -26,8 +22,7 @@ import { SlugModelMixin } from 'src/extensions/base/mixins/slug.model.mixin';
 		order: 'publishedDate DESC',
 	},
 })
-@mixin(TimestampModelMixin)
-export class Article extends Entity {
+export class Article extends SlugifyEntityMixin(TimestampEntityMixin(Entity)) {
 	@property({
 		type: 'string',
 		id: true,
@@ -44,27 +39,6 @@ export class Article extends Entity {
 		index: true,
 	})
 	title: string;
-
-	@slug({
-		fields: 'title',
-		options: {
-			lower: true,
-			strict: true,
-		},
-	})
-	@property({
-		index: {
-			unique: true,
-		},
-		jsonSchema: {
-			readOnly: true,
-			pattern: '/^[a-z0-9]+([a-z0-9_-])*$/',
-			errorMessage: {
-				pattern: 'Invalid slug',
-			},
-		},
-	})
-	slug: string;
 
 	@property({
 		type: 'string',
@@ -120,7 +94,7 @@ export class Article extends Entity {
 		() => User,
 		{
 			keyTo: 'userId',
-			name: 'creator',
+			name: 'createdBy',
 		},
 		{
 			type: 'string',
@@ -130,7 +104,23 @@ export class Article extends Entity {
 			},
 		},
 	)
-	creatorId: string;
+	createdById: string;
+
+	@belongsTo(
+		() => User,
+		{
+			keyTo: 'userId',
+			name: 'lastUpdatedBy',
+		},
+		{
+			type: 'string',
+			mongodb: { dataType: 'ObjectID' },
+			jsonSchema: {
+				readOnly: true,
+			},
+		},
+	)
+	lastUpdatedById: string;
 
 	@belongsTo(
 		() => Category,

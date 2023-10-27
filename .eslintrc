@@ -3,7 +3,6 @@
 		"@loopback/eslint-config"
 	],
 	"rules": {
-		"@typescript-eslint/no-unsafe-declaration-merging": "off",
 		"@typescript-eslint/naming-convention": [
 			"error",
 			{
