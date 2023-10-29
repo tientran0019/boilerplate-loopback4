@@ -12,10 +12,10 @@
 import { belongsTo, Entity, model, property } from '@loopback/repository';
 
 import { User } from './user.model';
-import { TimestampMixin } from 'src/mixins/timestamp.mixin';
+import { TimestampEntityMixin } from 'src/extensions/timestamp';
 
 @model({ settings: { strict: false } })
-export class RefreshToken extends TimestampMixin(Entity) {
+export class RefreshToken extends TimestampEntityMixin(Entity) {
 	@property({
 		type: 'string',
 		id: true,

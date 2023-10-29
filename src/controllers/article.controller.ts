@@ -86,7 +86,8 @@ export class ArticleController {
 	async find(
 		@param.filter(Article) filter?: Filter<Article>,
 	): Promise<Article[]> {
-		return this.articleRepository.find(filter);
+		// @ts-ignore
+		return this.articleRepository.findWithPagination(filter);
 	}
 
 	@authenticate('jwt')

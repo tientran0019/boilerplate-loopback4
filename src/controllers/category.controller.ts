@@ -75,7 +75,8 @@ export class CategoryController {
 	async find(
 		@param.filter(Category) filter?: Filter<Category>,
 	): Promise<Category[]> {
-		return this.categoryRepository.find(filter);
+		// @ts-ignore
+		return this.categoryRepository.findWithPagination(filter);
 	}
 
 	@authenticate('jwt')

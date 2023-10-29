@@ -18,6 +18,7 @@ import { UserRepository } from './user.repository';
 import { SlugifyRepositoryMixin } from 'src/extensions/slugify';
 import { TimestampRepositoryMixin } from 'src/extensions/timestamp';
 import { SecurityBindings, UserProfile } from '@loopback/security';
+import { PaginationRepositoryMixin } from 'src/extensions/pagination';
 
 const TimestampMixin = TimestampRepositoryMixin<
 	Category,
@@ -29,7 +30,7 @@ const TimestampMixin = TimestampRepositoryMixin<
 	DefaultCrudRepository,
 );
 
-export class CategoryRepository extends SlugifyRepositoryMixin<
+const PaginationMixin = PaginationRepositoryMixin<
 	Category,
 	typeof Category.prototype.id,
 	Constructor<
@@ -37,6 +38,16 @@ export class CategoryRepository extends SlugifyRepositoryMixin<
 	>
 >(
 	TimestampMixin,
+);
+
+export class CategoryRepository extends SlugifyRepositoryMixin<
+	Category,
+	typeof Category.prototype.id,
+	Constructor<
+		DefaultCrudRepository<Category, typeof Category.prototype.id, CategoryRelations>
+	>
+>(
+	PaginationMixin,
 	{
 		fields: ['name'],
 	}

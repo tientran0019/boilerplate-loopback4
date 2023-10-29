@@ -12,8 +12,7 @@
 import { Entity, hasOne, model, property } from '@loopback/repository';
 import { UserRoles, UserStatus } from 'src/constants';
 import { UserCredentials } from './user-credentials.model';
-
-import { TimestampMixin } from 'src/mixins/timestamp.mixin';
+import { TimestampEntityMixin } from 'src/extensions/timestamp';
 
 @model({
 	// name: 'Users',
@@ -32,7 +31,7 @@ import { TimestampMixin } from 'src/mixins/timestamp.mixin';
 		// },
 	},
 })
-export class User extends TimestampMixin(Entity) {
+export class User extends TimestampEntityMixin(Entity) {
 	@property({
 		type: 'string',
 		id: true,

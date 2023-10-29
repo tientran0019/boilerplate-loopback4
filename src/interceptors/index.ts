@@ -10,7 +10,7 @@
 *------------------------------------------------------- */
 
 /**
- * The interceptor likes the remoting hook in lb3
+ * The interceptor likes the remote (end point) hook in lb3
  * https://loopback.io/doc/en/lb4/migration-models-remoting-hooks.html#modifying-request-parameters
  *
  * lb4 interceptor
@@ -55,5 +55,6 @@
  * https://loopback.io/doc/en/lb4/Interceptor.html#global-interceptors
  * */
 
-export * from './validate-user.interceptor';
+// export * from './validate-user.interceptor';
 export * from './test.interceptor';
+

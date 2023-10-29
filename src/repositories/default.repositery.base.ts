@@ -1,25 +1,16 @@
-import { MixinTarget } from '@loopback/core';
-import { CrudRepository, Entity, Model } from '@loopback/repository';
-import { SoftCrudRepository, SoftDeleteEntity } from 'loopback4-soft-delete';
-import { SlugifyEntity, SlugifyRepository, SlugifyRepositoryMixin } from 'src/extensions/slugify';
-import { TimestampEntity, TimestampRepository, TimestampRepositoryMixin } from 'src/extensions/timestamp';
+// import { MixinTarget } from '@loopback/core';
+// import { CrudRepository, DefaultCrudRepository, Entity, Model } from '@loopback/repository';
+// import { SoftCrudRepository, SoftDeleteEntity } from 'loopback4-soft-delete';
+// import { SlugifyEntity, SlugifyRepository, SlugifyRepositoryMixin } from 'src/extensions/slugify';
+// import { TimestampEntity, TimestampRepository, TimestampRepositoryMixin } from 'src/extensions/timestamp';
+// import { PaginationRepositoryMixin } from 'src/extensions/pagination';
 
-// export abstract class DefaultSlugifyRepository<
-// 	T extends SlugifyEntity,
+// export function MyProjectRepositoryMixin<
+// 	E extends Entity,
 // 	ID,
-// 	Relations extends object = {},
-// > extends SlugifyRepository<T, ID, Relations> { }
-
-// export abstract class DefaultRepository<
-// 	T extends Entity,
-// 	ID,
-// 	Relations extends object = {},
-// > extends DefaultSlugifyRepository<T, ID, Relations> { }
-
-// export default function CompositionMixin<
-// 	T extends Model,
-// 	R extends MixinTarget<CrudRepository<T>>
+// 	T extends MixinTarget<DefaultCrudRepository<E, ID, R>>,
+// 	R extends object = {},
 // >(superClass: R) {
-// 	//ts-ignore
-// 	return TimestampRepositoryMixin(SlugifyRepositoryMixin(superClass));
+// 	return PaginationRepositoryMixin(TimestampRepositoryMixin(SlugifyRepositoryMixin(superClass)));
 // }
+

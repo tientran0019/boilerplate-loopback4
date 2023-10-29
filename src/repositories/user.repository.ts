@@ -9,7 +9,7 @@
 * Last updated by: Tien Tran
 *------------------------------------------------------- */
 
-import { Getter, inject } from '@loopback/core';
+import { Constructor, Getter, inject } from '@loopback/core';
 import {
 	DefaultCrudRepository,
 	HasOneRepositoryFactory,
@@ -20,16 +20,21 @@ import {
 import { User, UserCredentials, UserRelations } from 'src/models';
 
 import { UserCredentialsRepository } from './user-credentials.repository';
+import { TimestampRepositoryMixin } from 'src/extensions/timestamp';
 
-export class UserRepository extends DefaultCrudRepository<
+export class UserRepository extends TimestampRepositoryMixin<
 	User,
 	typeof User.prototype.id,
-	UserRelations
-> {
-	public readonly userCredentials: HasOneRepositoryFactory<
-		UserCredentials,
-		typeof User.prototype.id
-	>;
+	Constructor<
+		DefaultCrudRepository<User, typeof User.prototype.id, UserRelations>
+	>
+>(
+	DefaultCrudRepository,
+	{
+		userTracking: false,
+	}
+) {
+	public readonly userCredentials: HasOneRepositoryFactory<UserCredentials, typeof User.prototype.id>;
 
 	constructor(
 		@inject('datasources.mongo')
