@@ -47,7 +47,7 @@ export function TimestampRepositoryMixin<
 		throwIfNoUser: true,
 		createdField: 'createdById',
 		updatedField: 'lastUpdatedById',
-	}, configs ?? {});
+	}, configs ?? {}) as TimestampRepositoryMixinOptions;
 
 	debug('DEV ~ file: timestamp.repository.mixin.ts:46 ~ configs:', configs);
 

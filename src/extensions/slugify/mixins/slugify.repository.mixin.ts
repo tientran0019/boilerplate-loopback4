@@ -9,7 +9,7 @@
 * Last updated by: Tien Tran
 *------------------------------------------------------- */
 
-import { AnyObject, Condition, Count, DataObject, DefaultCrudRepository, Entity, Filter, Options, Where } from '@loopback/repository';
+import { AnyObject, Condition, DataObject, DefaultCrudRepository, Entity, Filter, Options } from '@loopback/repository';
 
 import {
 	IBaseEntity,
@@ -42,7 +42,7 @@ export function SlugifyRepositoryMixin<
 			lower: true,
 			strict: true,
 		},
-	}, configs ?? {});
+	}, configs ?? {}) as SlugifyRepositoryOptions;
 
 	const generateSlug = (data: AnyObject): string => {
 		const fields: string[] = toArray(configs?.fields ?? []);

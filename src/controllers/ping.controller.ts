@@ -9,6 +9,8 @@
 * Last updated by: Tien Tran
 *------------------------------------------------------- */
 
+import { authenticate } from '@loopback/authentication';
+import { authorize } from '@loopback/authorization';
 import { inject } from '@loopback/core';
 import {
 	Request,
@@ -17,6 +19,7 @@ import {
 	get,
 	response,
 } from '@loopback/rest';
+import { AUTHENTICATED } from 'src/extensions/authentication-jwt';
 
 import { LoggerBindings, LoggerService } from 'src/extensions/logger';
 
@@ -64,8 +67,8 @@ export class PingController {
 
 	// Map to `GET /ping`
 	@get('/ping')
-	// @authenticate('jwt')
-	// @authorize({ allowedRoles: [], deniedRoles: [] })
+	@authenticate('jwt')
+	// @authorize({ allowedRoles: [AUTHENTICATED], deniedRoles: [] })
 	@response(200, PING_RESPONSE)
 	ping(): object {
 		this.logger.log('info', 'greeting');

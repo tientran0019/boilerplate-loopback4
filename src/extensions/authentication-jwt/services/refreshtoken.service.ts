@@ -48,7 +48,7 @@ export class RefreshTokenService {
 			token: uuidv4(),
 		};
 		const refreshToken = await signAsync(data, this.refreshSecret, {
-			expiresIn: Number(this.refreshExpiresIn),
+			expiresIn: this.refreshExpiresIn,
 			issuer: this.refreshIssure,
 		});
 		const result = {

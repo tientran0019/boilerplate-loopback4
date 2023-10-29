@@ -63,7 +63,8 @@ export class TokenService implements ITokenService {
 
 	async revokeToken(token: string): Promise<boolean> {
 		try {
-			await this.revokedTokenRepository.set(token, { token });
+			await this.revokedTokenRepository.set(token, { token: 'true' });
+			await this.revokedTokenRepository.expire(token, parseInt(this.jwtExpiresIn, 10));
 
 			return true;
 		} catch (error) {
@@ -88,7 +89,7 @@ export class TokenService implements ITokenService {
 		let token: string;
 		try {
 			token = await signAsync(userInfoForToken, this.jwtSecret, {
-				expiresIn: Number(this.jwtExpiresIn),
+				expiresIn: this.jwtExpiresIn,
 			});
 		} catch (error) {
 			throw new HttpErrors.Unauthorized(`Error encoding token : ${error}`);

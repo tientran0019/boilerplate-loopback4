@@ -11,7 +11,9 @@
 
 import { Entity, model, property } from '@loopback/repository';
 
-@model()
+@model({
+	name: 'RevokedToken',
+})
 export class RevokedToken extends Entity {
 	@property({
 		type: 'string',
