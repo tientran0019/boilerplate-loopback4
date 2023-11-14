@@ -1,7 +1,7 @@
 {
-  "name": "simplize-trip-api",
+  "name": "boilerplate-loopback4",
   "version": "0.0.1",
-  "description": "simplize trip api",
+  "description": "boilerplate-loopback4",
   "keywords": [
     "loopback-application",
     "loopback"
@@ -23,8 +23,8 @@
     "eslint:fix": "yarn run eslint --fix",
     "pretest": "yarn run rebuild",
     "posttest": "yarn run lint",
-    "docker:build": "docker build -t simplize-trip-api .",
-    "docker:run": "docker run -p 3000:3000 -d simplize-trip-api",
+    "docker:build": "docker build -t boilerplate-loopback4 .",
+    "docker:run": "docker run -p 3000:3000 -d boilerplate-loopback4",
     "premigrate": "yarn run build",
     "migrate": "env-cmd node -r tsconfig-paths/register ./dist/migrate",
     "preopenapi-spec": "yarn run build",

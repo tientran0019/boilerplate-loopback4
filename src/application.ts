@@ -25,7 +25,7 @@ import {
 
 export { ApplicationConfig };
 
-export class SimplizeTripApiApplication extends BootMixin(
+export class BoilerplateLoopback4Application extends BootMixin(
 	ServiceMixin(RepositoryMixin(RestApplication)),
 ) {
 	constructor(options: ApplicationConfig = {}) {
